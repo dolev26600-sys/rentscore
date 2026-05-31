@@ -1,3 +1,5 @@
+const https = require('https');
+
 exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -14,41 +16,63 @@ exports.handler = async (event) => {
       return {
         statusCode: 500,
         headers,
-        body: JSON.stringify({ error: 'ANTHROPIC_API_KEY חסר - יש להגדיר ב-Netlify Environment Variables' })
+        body: JSON.stringify({ error: 'ANTHROPIC_API_KEY חסר' })
       };
     }
 
     const { prompt } = JSON.parse(event.body);
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01"
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-5",
-        max_tokens: 1500,
-        messages: [{ role: "user", content: prompt }]
-      })
+    const requestBody = JSON.stringify({
+      model: "claude-sonnet-4-5",
+      max_tokens: 1500,
+      messages: [{ role: "user", content: prompt }]
     });
 
-    const data = await response.json();
+    const result = await new Promise((resolve, reject) => {
+      const options = {
+        hostname: 'api.anthropic.com',
+        path: '/v1/messages',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'Content-Length': Buffer.byteLength(requestBody)
+        }
+      };
 
-    if (!response.ok) {
+      const req = https.request(options, (res) => {
+        let data = '';
+        res.on('data', chunk => { data += chunk; });
+        res.on('end', () => {
+          try {
+            const parsed = JSON.parse(data);
+            resolve({ status: res.statusCode, body: parsed });
+          } catch (e) {
+            reject(new Error('Invalid JSON response'));
+          }
+        });
+      });
+
+      req.on('error', reject);
+      req.write(requestBody);
+      req.end();
+    });
+
+    if (result.status !== 200) {
       return {
-        statusCode: response.status,
+        statusCode: result.status,
         headers,
-        body: JSON.stringify({ error: data.error?.message || `Anthropic error ${response.status}` })
+        body: JSON.stringify({ error: result.body.error?.message || `API error ${result.status}` })
       };
     }
 
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ result: data.content[0].text })
+      body: JSON.stringify({ result: result.body.content[0].text })
     };
+
   } catch (err) {
     return {
       statusCode: 500,
