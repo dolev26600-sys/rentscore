@@ -13,16 +13,14 @@ interface Flag {
 }
 
 async function callClaude(prompt: string): Promise<string> {
-  // Route through Netlify function (/api/claude → /.netlify/functions/claude)
-  // which holds ANTHROPIC_API_KEY server-side — avoids browser CORS restrictions.
-  const res = await fetch('/api/claude', {
+  const res = await fetch('/api/ai', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt }),
   });
   if (res.ok) {
     const data = await res.json();
-    return data.content;
+    return data.result;
   }
   throw new Error('API unavailable');
 }
