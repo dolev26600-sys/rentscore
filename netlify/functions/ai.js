@@ -1,9 +1,20 @@
 exports.handler = async (event) => {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type': 'application/json'
+  };
+
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
+  }
+
   try {
     if (!process.env.ANTHROPIC_API_KEY) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: 'ANTHROPIC_API_KEY is not set in environment variables' })
+        headers,
+        body: JSON.stringify({ error: 'ANTHROPIC_API_KEY חסר - יש להגדיר ב-Netlify Environment Variables' })
       };
     }
 
@@ -28,17 +39,20 @@ exports.handler = async (event) => {
     if (!response.ok) {
       return {
         statusCode: response.status,
-        body: JSON.stringify({ error: data.error?.message || 'Anthropic API error' })
+        headers,
+        body: JSON.stringify({ error: data.error?.message || `Anthropic error ${response.status}` })
       };
     }
 
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify({ result: data.content[0].text })
     };
   } catch (err) {
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ error: err.message || 'Unknown error' })
     };
   }
