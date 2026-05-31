@@ -32,12 +32,13 @@ function ContractAnalyzer() {
     if (!contractText.trim()) return toast.error('הדבק טקסט מהחוזה');
     setLoading(true);
     try {
-      const prompt = `אתה עורך דין מומחה בדיני שכירות ישראליים. נתח את סעיפי החוזה הבא והחזר ניתוח בפורמט JSON עם מערך "flags" כאשר כל איבר מכיל: clause (שם הסעיף), status (green/yellow/red), explanation (הסבר קצר בעברית).
+      const prompt = `אתה עורך דין ישראלי מומחה בדיני שכירות. נתח את החוזה הבא מנקודת מבט השוכר.
+זהה סעיפים בעייתיים (אדום), סעיפים הדורשים תשומת לב (צהוב), וסעיפים טובים (ירוק).
+החזר JSON בלבד ללא טקסט נוסף: { "flags": [{ "clause": "שם הסעיף", "status": "red"|"yellow"|"green", "explanation": "הסבר קצר ומעשי בעברית" }] }
+מקסימום 7 סעיפים, התמקד בהשפעה על השוכר.
 
 חוזה:
-${contractText}
-
-החזר רק JSON תקני.`;
+${contractText}`;
 
       const result = await callClaude(prompt);
 
@@ -106,14 +107,10 @@ function MessageWriter() {
     if (!form.name) return toast.error('נא להזין שם');
     setLoading(true);
     try {
-      const prompt = `כתוב הודעה אישית ומשכנעת בעברית לבעל נכס מהשוכר הפוטנציאלי:
-שם: ${form.name}
-עיר: ${form.city}
-תעסוקה: ${form.employment}
-תקציב: ${form.price}
-פרטים נוספים: ${form.notes}
-
-ההודעה צריכה להיות: קצרה (3-4 משפטים), אישית, מקצועית ומשכנעת. פתח עם שלום, הצג את עצמך, ציין יתרון אחד מרכזי ובקש לסדר צפייה.`;
+      const prompt = `כתוב הודעת WhatsApp קצרה ומשכנעת בעברית לבעל נכס.
+פרטי השוכר: שם ${form.name}, עובד כ${form.employment || 'שכיר'}, תקציב ${form.price}₪, מחפש ב${form.city || 'האזור'}.${form.notes ? ' ' + form.notes : ''}
+דרישות: 3 משפטים בלבד. פתח בשלום + שם, ציין תעסוקה ויתרון אחד שיגרום לבעל הנכס לסמוך, סיים בבקשת צפייה.
+ללא כותרות, ללא bullet points, רק הודעה.`;
 
       const result = await callClaude(prompt);
       setMessage(result);
@@ -177,13 +174,10 @@ function ScoreCoach() {
   const analyze = async () => {
     setLoading(true);
     try {
-      const prompt = `אתה יועץ שוכרים ישראלי. המשתמש הוא שוכר עם הנתונים הבאים:
-ציון RentScore: ${profile.score || 'לא ידוע'}
-תעסוקה: ${profile.employment || 'לא צוין'}
-שנות שכירות: ${profile.years || 'לא צוין'}
-עיר: ${profile.city || 'לא צוין'}
-
-תן תוכנית שיפור ספציפית ומפורטת בעברית: מה לשפר, למה זה חשוב ואיך לעשות זאת. פרק ל-4-5 נקודות מעשיות.`;
+      const prompt = `אתה יועץ מומחה לשוכרים בישראל. נתח את הפרופיל ותן עצות ספציפיות לשיפור.
+פרטים: ציון ${profile.score || 'לא ידוע'}, תעסוקה: ${profile.employment || 'לא צוין'}, שנות שכירות: ${profile.years || 'לא צוין'}, עיר: ${profile.city || 'לא צוין'}.
+תן בדיוק 4 עצות. כל עצה במבנה: **כותרת** — הסבר קצר + "יוסיף X נקודות לציון".
+התמקד בפעולות שהשוכר יכול לעשות כבר היום. כתוב בעברית, ישיר ומעשי.`;
 
       const result = await callClaude(prompt);
       setAnalysis(result);
@@ -241,11 +235,11 @@ function LegalQA() {
     if (!question.trim()) return toast.error('כתוב שאלה');
     setLoading(true);
     try {
-      const prompt = `ענה בעברית קצר על שאלת שכירות ישראלית:
+      const prompt = `אתה יועץ משפטי מומחה לדיני שכירות בישראל. ענה על השאלה הבאה.
+מבנה התשובה: (1) תשובה ישירה לשאלה, (2) החוק הרלוונטי אם קיים, (3) המלצה מעשית לפעולה.
+כתוב בעברית ברורה, ללא מבוא מיותר. סיים תמיד ב: "* אינו ייעוץ משפטי פרטני."
 
-שאלה: ${question}
-
-הוסף בסוף: "* המידע הוא כללי ואינו מהווה ייעוץ משפטי פרטני."`;
+שאלה: ${question}`;
 
       const result = await callClaude(prompt);
       setAnswer(result);
