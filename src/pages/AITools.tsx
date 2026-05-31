@@ -41,21 +41,7 @@ ${contractText}
 
 החזר רק JSON תקני.`;
 
-      let result: string;
-      try {
-        result = await callClaude(prompt);
-      } catch {
-        // Demo response
-        result = JSON.stringify({
-          flags: [
-            { clause: 'סעיף פיקדון', status: 'red', explanation: 'הפיקדון גבוה מ-3 חודשים – לא חוקי לפי חוק שכירות הוגנת' },
-            { clause: 'כניסה לדירה', status: 'yellow', explanation: 'לא מצוין זמן הודעה מראש – מומלץ להוסיף 48 שעות' },
-            { clause: 'תיקונים', status: 'green', explanation: 'האחריות לתיקונים מוגדרת בבירור' },
-            { clause: 'תאריך סיום', status: 'green', explanation: 'מוגדר בבירור עם אפשרות חידוש' },
-            { clause: 'העלאת שכ"ד', status: 'yellow', explanation: 'לא מצוין מנגנון הצמדה – בדוק אם מוסכם' },
-          ]
-        });
-      }
+      const result = await callClaude(prompt);
 
       const json = JSON.parse(result.replace(/```json\n?|```/g, '').trim());
       setFlags(json.flags || []);
@@ -131,20 +117,7 @@ function MessageWriter() {
 
 ההודעה צריכה להיות: קצרה (3-4 משפטים), אישית, מקצועית ומשכנעת. פתח עם שלום, הצג את עצמך, ציין יתרון אחד מרכזי ובקש לסדר צפייה.`;
 
-      let result: string;
-      try {
-        result = await callClaude(prompt);
-      } catch {
-        result = `שלום,
-
-שמי ${form.name} ואני ${form.employment} המחפש דירה ב${form.city} בתקציב של ${form.price} ₪.
-אני שוכר אחראי עם היסטוריה נקייה, ומחפש דירה לטווח ארוך.
-${form.notes ? form.notes + '.' : ''}
-אשמח לסדר צפייה בהקדם האפשרי.
-
-תודה, ${form.name}`;
-      }
-
+      const result = await callClaude(prompt);
       setMessage(result);
     } finally {
       setLoading(false);
@@ -212,23 +185,7 @@ function ScoreCoach() {
 
 תן תוכנית שיפור ספציפית ומפורטת בעברית: מה לשפר, למה זה חשוב ואיך לעשות זאת. פרק ל-4-5 נקודות מעשיות.`;
 
-      let result: string;
-      try {
-        result = await callClaude(prompt);
-      } catch {
-        result = `**תוכנית שיפור הציון שלך:**
-
-1. **הוסף ערב (+5 נקודות)** – ערב מוסיף אמינות רבה. פנה לבן משפחה או חבר.
-
-2. **השלם את פרטי התעסוקה (+3 נקודות)** – ציין מה הוותק שלך בעבודה הנוכחית.
-
-3. **בקש המלצה (+5 נקודות)** – פנה לבעל נכס קודם ובקש המלצה קצרה.
-
-4. **הוסף מידע על מגורים (+2 נקודות)** – ציין אם אתה גר לבד או עם שותפים.
-
-5. **שתף את הפרופיל** – פרופיל מוכן מראש מגדיל שיעור מענה ב-60%.`;
-      }
-
+      const result = await callClaude(prompt);
       setAnalysis(result);
     } finally {
       setLoading(false);
@@ -288,21 +245,7 @@ function LegalQA() {
 
 הוסף בסוף: "* המידע הוא כללי ואינו מהווה ייעוץ משפטי פרטני."`;
 
-      let result: string;
-      try {
-        result = await callClaude(prompt);
-      } catch {
-        result = `תשובה לשאלתך: ${question}
-
-בנושא זה חוק שכירות הוגנת (תשע"ז-2017) קובע הגנות ספציפיות לשוכרים בישראל.
-
-עפ"י החוק, השוכר זכאי לקבל חוזה בכתב, הפיקדון מוגבל ל-3 חודשים, ובעל הנכס חייב לטפל בתיקונים דחופים.
-
-לשאלות ספציפיות מומלץ לפנות ללשכת עורכי הדין או לייעוץ משפטי פרטני.
-
-* המידע הוא כללי ואינו מהווה ייעוץ משפטי פרטני.`;
-      }
-
+      const result = await callClaude(prompt);
       setAnswer(result);
     } finally {
       setLoading(false);
