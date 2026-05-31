@@ -38,65 +38,67 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <div className="bg-tenant-600 pt-12 pb-8 px-6 text-center">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-            <Home className="w-5 h-5 text-tenant-600" />
+      <div className="bg-gradient-to-b from-tenant-700 to-tenant-600 pt-12 pb-10 px-6 text-center">
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md">
+            <Home className="w-6 h-6 text-tenant-600" />
           </div>
-          <span className="text-white font-black text-xl">RentScore</span>
+          <span className="text-white font-black text-2xl">RentScore</span>
         </div>
-        <h1 className="text-white text-2xl font-bold">התחברות</h1>
+        <h1 className="text-white text-xl font-bold opacity-90">ברוך הבא בחזרה</h1>
       </div>
 
       <div className="flex-1 px-6 py-8">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">דוא"ל</label>
-            <input
-              type="email"
-              placeholder="you@example.com"
-              value={form.email}
-              onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-tenant-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">סיסמה</label>
-            <div className="relative">
+        <div className="card p-6 animate-scale-in">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">דוא"ל</label>
               <input
-                type={showPw ? 'text' : 'password'}
-                placeholder="סיסמה"
-                value={form.password}
-                onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-tenant-500 pl-12"
+                type="email"
+                placeholder="you@example.com"
+                value={form.email}
+                onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+                className="input-field"
               />
-              <button
-                type="button"
-                onClick={() => setShowPw(!showPw)}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              >
-                {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
             </div>
-          </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">סיסמה</label>
+              <div className="relative">
+                <input
+                  type={showPw ? 'text' : 'password'}
+                  placeholder="הזן סיסמה"
+                  value={form.password}
+                  onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+                  className="input-field pl-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw(!showPw)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-tenant-600 hover:bg-tenant-700 text-white font-bold py-4 rounded-2xl text-lg transition-colors disabled:opacity-60"
-          >
-            {loading ? 'מתחבר...' : 'התחבר'}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn btn-tenant btn-lg w-full mt-2"
+            >
+              {loading ? <><span className="spinner" /> מתחבר...</> : 'התחבר'}
+            </button>
+          </form>
+        </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-gray-500 mt-5">
           אין לך חשבון?{' '}
-          <Link to="/signup" className="font-bold text-tenant-600">הרשם עכשיו</Link>
+          <Link to="/signup" className="font-bold text-tenant-600 hover:underline">הרשם עכשיו</Link>
         </p>
 
         <button
           onClick={() => navigate('/demo')}
-          className="w-full mt-4 border border-gray-200 rounded-xl py-3 text-gray-600 font-medium text-sm"
+          className="w-full mt-3 border-2 border-gray-200 rounded-2xl py-3 text-gray-500 font-medium text-sm hover:border-gray-300 transition-colors"
         >
           צפה בדמו ללא הרשמה
         </button>
