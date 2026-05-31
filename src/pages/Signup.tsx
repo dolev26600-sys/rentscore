@@ -25,14 +25,17 @@ export default function Signup() {
     setLoading(true);
     try {
       const password_hash = await hashPassword(form.password);
+      const email = form.email.toLowerCase().trim();
+      const phone = form.phone.trim() || null;
       const { data, error } = await supabase
         .from('users')
-        .insert({ ...form, password_hash, user_type: userType })
+        .insert({ full_name: form.full_name, email, phone, password_hash, user_type: userType })
         .select()
         .single();
       if (error) {
+        console.error('Signup error:', error);
         if (error.code === '23505') toast.error('כתובת המייל כבר קיימת במערכת');
-        else toast.error('שגיאה ברישום, נסה שנית');
+        else toast.error(`שגיאה ברישום: ${error.message}`);
         return;
       }
       setUser(data);

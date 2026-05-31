@@ -13,31 +13,8 @@ interface Flag {
 }
 
 async function callClaude(prompt: string): Promise<string> {
-  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY as string | undefined;
-
-  // Try direct Anthropic API if key is available
-  if (apiKey) {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1024,
-        messages: [{ role: 'user', content: prompt }],
-      }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      return data.content?.[0]?.text ?? '';
-    }
-  }
-
-  // Fallback: proxy endpoint (works when a backend is available)
+  // Route through Netlify function (/api/claude → /.netlify/functions/claude)
+  // which holds ANTHROPIC_API_KEY server-side — avoids browser CORS restrictions.
   const res = await fetch('/api/claude', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -47,7 +24,6 @@ async function callClaude(prompt: string): Promise<string> {
     const data = await res.json();
     return data.content;
   }
-
   throw new Error('API unavailable');
 }
 
