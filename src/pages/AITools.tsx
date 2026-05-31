@@ -18,11 +18,9 @@ async function callClaude(prompt: string): Promise<string> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt }),
   });
-  if (res.ok) {
-    const data = await res.json();
-    return data.result;
-  }
-  throw new Error('API unavailable');
+  const data = await res.json();
+  if (res.ok && data.result) return data.result;
+  throw new Error(data.error || `שגיאה ${res.status}`);
 }
 
 function ContractAnalyzer() {
@@ -119,6 +117,8 @@ function MessageWriter() {
 
       const result = await callClaude(prompt);
       setMessage(result);
+    } catch (err: any) {
+      toast.error(err.message || 'שגיאה בחיבור ל-AI');
     } finally {
       setLoading(false);
     }
@@ -187,6 +187,8 @@ function ScoreCoach() {
 
       const result = await callClaude(prompt);
       setAnalysis(result);
+    } catch (err: any) {
+      toast.error(err.message || 'שגיאה בחיבור ל-AI');
     } finally {
       setLoading(false);
     }
@@ -247,6 +249,8 @@ function LegalQA() {
 
       const result = await callClaude(prompt);
       setAnswer(result);
+    } catch (err: any) {
+      toast.error(err.message || 'שגיאה בחיבור ל-AI');
     } finally {
       setLoading(false);
     }
