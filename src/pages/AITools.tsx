@@ -66,12 +66,12 @@ ${contractText}
           placeholder="הדבק כאן את תוכן החוזה שלך..."
           value={contractText}
           onChange={e => setContractText(e.target.value)}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
+          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-tenant-500"
         />
         <button
           onClick={analyze}
           disabled={loading}
-          className="w-full mt-3 bg-purple-600 text-white font-bold py-3 rounded-xl disabled:opacity-60 flex items-center justify-center gap-2"
+          className="btn btn-tenant btn-md w-full mt-3"
         >
           {loading ? <><Loader className="w-4 h-4 animate-spin" /> מנתח...</> : 'נתח חוזה עם AI'}
         </button>
@@ -140,14 +140,14 @@ function MessageWriter() {
               placeholder={f.placeholder}
               value={(form as any)[f.key]}
               onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-tenant-500"
             />
           </div>
         ))}
         <button
           onClick={generate}
           disabled={loading}
-          className="w-full bg-purple-600 text-white font-bold py-3 rounded-xl disabled:opacity-60 flex items-center justify-center gap-2"
+          className="btn btn-tenant btn-md w-full"
         >
           {loading ? <><Loader className="w-4 h-4 animate-spin" /> כותב...</> : 'כתוב הודעה עם AI'}
         </button>
@@ -159,7 +159,7 @@ function MessageWriter() {
             <h3 className="font-bold text-gray-800">ההודעה שלך</h3>
             <button
               onClick={() => { navigator.clipboard.writeText(message); toast.success('הועתק!'); }}
-              className="text-xs text-purple-600 font-bold"
+              className="text-xs text-tenant-600 font-bold"
             >העתק</button>
           </div>
           <p className="text-sm text-gray-700 whitespace-pre-line bg-gray-50 rounded-xl p-3">{message}</p>
@@ -209,14 +209,14 @@ function ScoreCoach() {
               placeholder={f.placeholder}
               value={(profile as any)[f.key]}
               onChange={e => setProfile(p => ({ ...p, [f.key]: e.target.value }))}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-tenant-500"
             />
           </div>
         ))}
         <button
           onClick={analyze}
           disabled={loading}
-          className="w-full bg-purple-600 text-white font-bold py-3 rounded-xl disabled:opacity-60 flex items-center justify-center gap-2"
+          className="btn btn-tenant btn-md w-full"
         >
           {loading ? <><Loader className="w-4 h-4 animate-spin" /> מנתח...</> : 'קבל תוכנית שיפור'}
         </button>
@@ -267,11 +267,11 @@ function LegalQA() {
           placeholder="לדוגמה: האם בעל הנכס יכול להוציא אותי ללא הודעה מראש?"
           value={question}
           onChange={e => setQuestion(e.target.value)}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
+          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-tenant-500"
         />
         <div className="flex gap-2 mt-2 flex-wrap">
           {examples.map(ex => (
-            <button key={ex} onClick={() => setQuestion(ex)} className="text-xs bg-purple-50 text-purple-600 px-2 py-1 rounded-lg">
+            <button key={ex} onClick={() => setQuestion(ex)} className="text-xs bg-tenant-50 text-tenant-600 px-2 py-1 rounded-lg">
               {ex}
             </button>
           ))}
@@ -279,7 +279,7 @@ function LegalQA() {
         <button
           onClick={ask}
           disabled={loading}
-          className="w-full mt-3 bg-purple-600 text-white font-bold py-3 rounded-xl disabled:opacity-60 flex items-center justify-center gap-2"
+          className="btn btn-tenant btn-md w-full mt-3"
         >
           {loading ? <><Loader className="w-4 h-4 animate-spin" /> מחפש תשובה...</> : 'שאל את AI'}
         </button>
@@ -299,7 +299,7 @@ const tools = [
   { id: 'contract' as Tool, icon: FileText, label: 'ניתוח חוזה', desc: 'אתר סעיפים בעייתיים', color: 'from-red-500 to-red-700' },
   { id: 'message' as Tool, icon: MessageSquare, label: 'כתיבת הודעה', desc: 'הודעה מנצחת לבעל נכס', color: 'from-blue-500 to-blue-700' },
   { id: 'coach' as Tool, icon: TrendingUp, label: 'מאמן ציון', desc: 'תוכנית שיפור אישית', color: 'from-green-500 to-green-700' },
-  { id: 'legal' as Tool, icon: HelpCircle, label: 'שאל משפטי', desc: 'שאלות על חוק שכירות', color: 'from-purple-500 to-purple-700' },
+  { id: 'legal' as Tool, icon: HelpCircle, label: 'שאל משפטי', desc: 'שאלות על חוק שכירות', color: 'from-tenant-500 to-tenant-700' },
 ];
 
 export default function AITools() {
@@ -310,10 +310,10 @@ export default function AITools() {
       <PageHeader title="כלי AI" backTo="/tenant/home" />
 
       {/* Hero */}
-      <div className="mx-4 mt-4 bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-5 text-white mb-4">
+      <div className="mx-4 mt-4 bg-gradient-to-br from-tenant-700 to-tenant-900 rounded-2xl p-5 text-white mb-4">
         <Zap className="w-8 h-8 mb-2" />
         <h2 className="text-xl font-bold">בינה מלאכותית לשוכרים</h2>
-        <p className="text-purple-200 text-sm mt-1">כלים חכמים לניתוח חוזים, כתיבת הודעות ושאלות משפטיות</p>
+        <p className="text-tenant-200 text-sm mt-1">כלים חכמים לניתוח חוזים, כתיבת הודעות ושאלות משפטיות</p>
       </div>
 
       {!active ? (
