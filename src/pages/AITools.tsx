@@ -241,7 +241,7 @@ function LegalQA() {
     if (!question.trim()) return toast.error('כתוב שאלה');
     setLoading(true);
     try {
-      const prompt = `אתה עורך דין מומחה בדיני שכירות ישראליים. ענה על השאלה הבאה בעברית בצורה מדויקת, מועילה ומקיפה. ציין חוקים רלוונטיים אם קיימים.
+      const prompt = `ענה בעברית קצר על שאלת שכירות ישראלית:
 
 שאלה: ${question}
 
