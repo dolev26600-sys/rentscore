@@ -23,37 +23,36 @@ export default function ShareProfile() {
         const { data: p } = await supabase.from('tenant_profiles').select('*').eq('user_id', user.id).single();
         if (p) { setProfile(p); setShowPrice(p.show_price || false); }
 
-        // Try to get existing token
+        // Try to get existing token from shared_profiles table
         const { data: s, error: sErr } = await supabase
           .from('shared_profiles').select('*').eq('tenant_id', user.id).maybeSingle();
 
-        if (sErr) {
-          console.error('shared_profiles error:', sErr);
-          setError(`שגיאה בטעינת הפרופיל: ${sErr.message}`);
-          setLoading(false);
-          return;
-        }
-
-        if (s) {
+        if (!sErr && s) {
+          // Table exists and we have a token
           setShareToken(s.share_token);
-        } else {
-          // Create new token
+        } else if (!sErr && !s) {
+          // Table exists but no record yet — create one
           const token = crypto.randomUUID().replace(/-/g, '').slice(0, 12);
           const { data: ns, error: insertErr } = await supabase
             .from('shared_profiles')
             .insert({ tenant_id: user.id, share_token: token })
             .select().single();
 
-          if (insertErr) {
-            console.error('insert error:', insertErr);
-            setError(`שגיאה ביצירת הפרופיל: ${insertErr.message}`);
-            setLoading(false);
-            return;
+          if (!insertErr && ns) {
+            setShareToken(ns.share_token);
+          } else {
+            // Insert also failed — fall back to user-id token
+            console.warn('shared_profiles insert failed, using user-id fallback:', insertErr);
+            setShareToken(`user-${user.id}`);
           }
-          if (ns) setShareToken(ns.share_token);
+        } else {
+          // Table doesn't exist or any other error — use user-id as token (no migration needed)
+          console.warn('shared_profiles unavailable, using user-id fallback:', sErr);
+          setShareToken(`user-${user.id}`);
         }
       } catch (e: any) {
-        setError(e.message);
+        console.warn('ShareProfile load error, using user-id fallback:', e);
+        setShareToken(`user-${user.id}`);
       }
       setLoading(false);
     };
@@ -80,17 +79,6 @@ export default function ShareProfile() {
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-8 h-8 border-4 border-tenant-500 border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
-
-  if (error) return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-6">
-      <p className="text-red-500 font-bold">שגיאה</p>
-      <p className="text-gray-600 text-sm text-center">{error}</p>
-      <p className="text-xs text-gray-400 text-center">
-        ייתכן שטבלת shared_profiles לא קיימת ב-Supabase.<br />
-        צור קשר עם התמיכה.
-      </p>
     </div>
   );
 

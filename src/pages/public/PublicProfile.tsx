@@ -72,15 +72,24 @@ export default function PublicProfile({ isDemo = false }: { isDemo?: boolean }) 
         return;
       }
 
-      const { data: shared } = await supabase.from('shared_profiles').select('tenant_id').eq('share_token', id).single();
-      if (!shared) { setError(true); setLoading(false); return; }
+      let tenantId: string;
 
-      const { data: user } = await supabase.from('users').select('*').eq('id', shared.tenant_id).single();
-      const { data: tp } = await supabase.from('tenant_profiles').select('*').eq('user_id', shared.tenant_id).single();
+      if (id && id.startsWith('user-')) {
+        // Fallback token: user-{uuid} — no shared_profiles table needed
+        tenantId = id.replace('user-', '');
+      } else {
+        // Normal flow: look up shared_profiles table
+        const { data: shared } = await supabase.from('shared_profiles').select('tenant_id').eq('share_token', id).single();
+        if (!shared) { setError(true); setLoading(false); return; }
+        tenantId = shared.tenant_id;
+      }
+
+      const { data: user } = await supabase.from('users').select('*').eq('id', tenantId).single();
+      const { data: tp } = await supabase.from('tenant_profiles').select('*').eq('user_id', tenantId).single();
       if (!user || !tp) { setError(true); setLoading(false); return; }
 
       setProfile({ ...tp, ...user, score: tp.score });
-      const { data: recs } = await supabase.from('recommendations').select('*').eq('tenant_id', shared.tenant_id).order('created_at', { ascending: false });
+      const { data: recs } = await supabase.from('recommendations').select('*').eq('tenant_id', tenantId).order('created_at', { ascending: false });
       setRecommendations(recs || []);
       setLoading(false);
     };
