@@ -17,6 +17,9 @@ import TenantProfile from './pages/tenant/TenantProfile';
 import ShareProfile from './pages/tenant/ShareProfile';
 import TenantGuides from './pages/tenant/TenantGuides';
 
+// Agent
+import AgentDashboard from './pages/agent/AgentDashboard';
+
 // Landlord
 import LandlordOnboarding from './pages/landlord/LandlordOnboarding';
 import LandlordHome from './pages/landlord/LandlordHome';
@@ -43,7 +46,10 @@ function RootRedirect() {
   const { user, loading } = useAuth();
   if (loading) return null;
   if (!user) return <Welcome />;
-  return <Navigate to={user.user_type === 'tenant' ? '/tenant/home' : '/landlord/home'} replace />;
+  if (user.user_type === 'tenant') return <Navigate to="/tenant/home" replace />;
+  // Check if this landlord user is actually an agent (has agent_type flag in localStorage)
+  const agentFlag = localStorage.getItem(`rentscore_agent_${user.id}`);
+  return <Navigate to={agentFlag ? '/agent/home' : '/landlord/home'} replace />;
 }
 
 function AppRoutes() {
@@ -87,6 +93,11 @@ function AppRoutes() {
       } />
       <Route path="/tenant/guides/calculator" element={
         <ProtectedRoute userType="tenant"><CostCalculator /></ProtectedRoute>
+      } />
+
+      {/* Agent */}
+      <Route path="/agent/home" element={
+        <ProtectedRoute userType="landlord"><AgentDashboard /></ProtectedRoute>
       } />
 
       {/* Landlord */}

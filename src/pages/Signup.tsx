@@ -9,8 +9,9 @@ export default function Signup() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const { setUser } = useAuth();
+  const isAgent = params.get('type') === 'agent';
   const [userType, setUserType] = useState<'tenant' | 'landlord'>(
-    (params.get('type') as 'tenant' | 'landlord') || 'tenant'
+    params.get('type') === 'tenant' ? 'tenant' : 'landlord'
   );
   const [form, setForm] = useState({ full_name: '', email: '', phone: '', password: '' });
   const [showPw, setShowPw] = useState(false);
@@ -40,7 +41,12 @@ export default function Signup() {
       }
       setUser(data);
       toast.success('ברוך הבא ל-RentScore!');
-      navigate(userType === 'tenant' ? '/tenant/onboarding' : '/landlord/onboarding');
+      if (isAgent) {
+        localStorage.setItem(`rentscore_agent_${data.id}`, '1');
+        navigate('/agent/home');
+      } else {
+        navigate(userType === 'tenant' ? '/tenant/onboarding' : '/landlord/onboarding');
+      }
     } finally {
       setLoading(false);
     }
@@ -51,19 +57,22 @@ export default function Signup() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <div className={`${isTenant ? 'bg-gradient-to-b from-tenant-700 to-tenant-600' : 'bg-gradient-to-b from-landlord-600 to-landlord-500'} pt-12 pb-10 px-6 text-center`}>
+      <div className={`${isTenant ? 'bg-gradient-to-b from-tenant-700 to-tenant-600' : 'bg-gradient-to-b from-gray-900 to-gray-700'} pt-12 pb-10 px-6 text-center`}>
         <div className="flex items-center justify-center gap-2 mb-3">
           <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md">
-            <Home className={`w-6 h-6 ${isTenant ? 'text-tenant-600' : 'text-landlord-600'}`} />
+            <Home className={`w-6 h-6 ${isTenant ? 'text-tenant-600' : 'text-gray-800'}`} />
           </div>
           <span className="text-white font-black text-2xl">RentScore</span>
         </div>
-        <h1 className="text-white text-xl font-bold opacity-90">יצירת חשבון חדש</h1>
+        <h1 className="text-white text-xl font-bold opacity-90">
+          {isAgent ? 'הרשמה לסוכנים' : 'יצירת חשבון חדש'}
+        </h1>
+        {isAgent && <p className="text-gray-300 text-sm mt-1 opacity-80">גישה למאגר שוכרים מאומתים</p>}
       </div>
 
       <div className="flex-1 px-6 py-6">
-        {/* Type selector */}
-        <div className="flex bg-white rounded-2xl p-1 mb-6 shadow-card border border-gray-100">
+        {/* Type selector — hidden for agent flow */}
+        <div className={`flex bg-white rounded-2xl p-1 mb-6 shadow-card border border-gray-100 ${isAgent ? 'hidden' : ''}`}>
           {(['tenant', 'landlord'] as const).map(type => (
             <button
               key={type}
