@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Share2, CheckCircle, Star, Clock, Zap, LogOut, ChevronLeft, TrendingUp } from 'lucide-react';
+import { Share2, CheckCircle, Star, Clock, Zap, LogOut, ChevronLeft, TrendingUp, Gift } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import ScoreCircle from '../../components/ScoreCircle';
@@ -186,6 +186,19 @@ export default function TenantHome() {
             </div>
             <p className="font-bold text-[14px] text-white">כלי AI</p>
             <p className="text-[12px] text-purple-200 mt-0.5">ניתוח חכם</p>
+          </button>
+          <button
+            onClick={() => navigate('/affiliate')}
+            className="col-span-2 rounded-2xl p-4 flex items-center justify-between"
+            style={{ background: 'linear-gradient(135deg, #111827, #374151)', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
+          >
+            <div className="text-right">
+              <p className="font-bold text-[14px] text-white">הרוויח ₪30 על כל חבר</p>
+              <p className="text-[12px] text-gray-400 mt-0.5">תוכנית שותפים — שתף וקבל קרדיט</p>
+            </div>
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Gift className="w-5 h-5 text-white" />
+            </div>
           </button>
         </div>
       </div>

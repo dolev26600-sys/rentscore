@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Send, Star, Shield, CheckCircle, LogOut, Copy, ChevronLeft, MapPin, Briefcase, TrendingUp, Users, Zap } from 'lucide-react';
+import { Search, Send, Star, Shield, CheckCircle, LogOut, Copy, ChevronLeft, MapPin, Briefcase, TrendingUp, Users, Zap, Gift } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -179,6 +179,20 @@ export default function AgentDashboard() {
             </div>
           ))}
         </div>
+
+        {/* Affiliate Banner */}
+        <button
+          onClick={() => navigate('/affiliate')}
+          className="w-full rounded-2xl px-5 py-3.5 flex items-center justify-between bg-white border border-gray-100 shadow-sm"
+        >
+          <div className="text-right">
+            <p className="font-bold text-[14px] text-gray-800">הרוויח ₪30 על כל סוכן שתביא</p>
+            <p className="text-gray-400 text-xs mt-0.5">תוכנית שותפים — קישור ייחודי לך</p>
+          </div>
+          <div className="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <Gift className="w-4 h-4 text-gray-600" />
+          </div>
+        </button>
 
         {/* Search + Filter */}
         <div className="space-y-2">

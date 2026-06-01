@@ -20,6 +20,7 @@ import RequestRecommendation from './pages/tenant/RequestRecommendation';
 
 // Agent
 import AgentDashboard from './pages/agent/AgentDashboard';
+import AffiliateProgram from './pages/affiliate/AffiliateProgram';
 
 // Landlord
 import LandlordOnboarding from './pages/landlord/LandlordOnboarding';
@@ -121,6 +122,11 @@ function AppRoutes() {
       } />
       <Route path="/landlord/add-property" element={
         <ProtectedRoute userType="landlord"><AddProperty /></ProtectedRoute>
+      } />
+
+      {/* Affiliate */}
+      <Route path="/affiliate" element={
+        <ProtectedRoute><AffiliateProgram /></ProtectedRoute>
       } />
 
       {/* AI Tools — accessible to both user types */}
