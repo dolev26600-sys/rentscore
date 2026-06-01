@@ -17,7 +17,10 @@ export default function ShareProfile() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     const load = async () => {
       try {
         const { data: p } = await supabase.from('tenant_profiles').select('*').eq('user_id', user.id).single();

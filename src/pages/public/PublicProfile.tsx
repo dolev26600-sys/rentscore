@@ -85,10 +85,19 @@ export default function PublicProfile({ isDemo = false }: { isDemo?: boolean }) 
       }
 
       const { data: user } = await supabase.from('users').select('*').eq('id', tenantId).single();
+      if (!user) { setError(true); setLoading(false); return; }
       const { data: tp } = await supabase.from('tenant_profiles').select('*').eq('user_id', tenantId).single();
-      if (!user || !tp) { setError(true); setLoading(false); return; }
 
-      setProfile({ ...tp, ...user, score: tp.score });
+      // Build profile even if tenant_profiles is missing — show basic info
+      const baseProfile = {
+        id: tenantId, full_name: user.full_name, user_type: 'tenant',
+        score: 50, years_renting: 0, current_city: '', employment_type: '',
+        income_range: '', job_seniority: '', housing_status: '',
+        has_guarantor: false, contract_preference: '', has_pets: false,
+        smokes: false, price_range_min: 0, price_range_max: 0,
+        show_price: false, phone: user.phone || '',
+      };
+      setProfile(tp ? { ...baseProfile, ...tp, ...user, score: tp.score } : { ...baseProfile, ...user });
       const { data: recs } = await supabase.from('recommendations').select('*').eq('tenant_id', tenantId).order('created_at', { ascending: false });
       setRecommendations(recs || []);
       setLoading(false);
