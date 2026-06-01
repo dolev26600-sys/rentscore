@@ -16,6 +16,7 @@ import TenantHome from './pages/tenant/TenantHome';
 import TenantProfile from './pages/tenant/TenantProfile';
 import ShareProfile from './pages/tenant/ShareProfile';
 import TenantGuides from './pages/tenant/TenantGuides';
+import RequestRecommendation from './pages/tenant/RequestRecommendation';
 
 // Agent
 import AgentDashboard from './pages/agent/AgentDashboard';
@@ -29,6 +30,7 @@ import AddProperty from './pages/landlord/AddProperty';
 
 // Public
 import PublicProfile from './pages/public/PublicProfile';
+import RecommendationApproval from './pages/public/RecommendationApproval';
 
 // Guides
 import TenantRights from './pages/guides/TenantRights';
@@ -61,6 +63,7 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/demo" element={<PublicProfile isDemo />} />
       <Route path="/profile/:id" element={<PublicProfile />} />
+      <Route path="/rec/:token" element={<RecommendationApproval />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
@@ -78,6 +81,9 @@ function AppRoutes() {
       } />
       <Route path="/tenant/share-profile" element={
         <ProtectedRoute userType="tenant"><ShareProfile /></ProtectedRoute>
+      } />
+      <Route path="/tenant/request-rec" element={
+        <ProtectedRoute userType="tenant"><RequestRecommendation /></ProtectedRoute>
       } />
       <Route path="/tenant/guides" element={
         <ProtectedRoute userType="tenant"><TenantGuides /></ProtectedRoute>

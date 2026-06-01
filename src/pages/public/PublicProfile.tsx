@@ -244,7 +244,12 @@ export default function PublicProfile({ isDemo = false }: { isDemo?: boolean }) 
                     <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center text-sm font-bold text-gray-600">
                       {rec.landlord_name?.[0]}
                     </div>
-                    <span className="font-semibold text-gray-800 text-sm">{rec.landlord_name}</span>
+                    <div>
+                      <span className="font-semibold text-gray-800 text-sm">{rec.landlord_name}</span>
+                      {rec.verified && (
+                        <span className="mr-1.5 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full border border-emerald-100">✓ מאומת</span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex gap-0.5">
                     {Array.from({ length: rec.rating }).map((_, j) => (

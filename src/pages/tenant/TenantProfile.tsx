@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Lock, ChevronLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Lock, Star, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
@@ -29,6 +30,7 @@ interface ProfileData {
 
 export default function TenantProfile() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileData>({});
   const [score, setScore] = useState(50);
   const [saving, setSaving] = useState<string | null>(null);
@@ -194,6 +196,24 @@ export default function TenantProfile() {
           </div>
         ))}
         <p className="text-xs text-gray-400 text-center mt-2">אימותים יהיו זמינים בקרוב</p>
+      </div>
+
+      {/* Request Recommendation CTA */}
+      <div className="mx-4 mt-4">
+        <button
+          onClick={() => navigate('/tenant/request-rec')}
+          className="w-full rounded-2xl px-5 py-4 flex items-center justify-between text-white"
+          style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', boxShadow: '0 4px 16px rgba(245,158,11,0.3)' }}
+        >
+          <div className="text-right">
+            <p className="font-black text-[15px]">בקש המלצה מאומתת</p>
+            <p className="text-amber-100 text-xs mt-0.5">שלח לבעל נכס קודם — +5 נקודות לציון</p>
+          </div>
+          <div className="flex items-center gap-1">
+            <Star className="w-6 h-6 opacity-90" />
+            <ArrowLeft className="w-4 h-4 opacity-60" />
+          </div>
+        </button>
       </div>
 
       {/* Trust message */}

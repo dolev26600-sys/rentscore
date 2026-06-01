@@ -10,6 +10,7 @@ export default function Signup() {
   const [params] = useSearchParams();
   const { setUser } = useAuth();
   const isAgent = params.get('type') === 'agent';
+  const refCode = params.get('ref') || '';
   const [userType, setUserType] = useState<'tenant' | 'landlord'>(
     params.get('type') === 'tenant' ? 'tenant' : 'landlord'
   );
@@ -30,7 +31,7 @@ export default function Signup() {
       const phone = form.phone.trim() || null;
       const { data, error } = await supabase
         .from('users')
-        .insert({ full_name: form.full_name, email, phone, password_hash, user_type: userType })
+        .insert({ full_name: form.full_name, email, phone, password_hash, user_type: userType, referred_by: refCode || null })
         .select()
         .single();
       if (error) {

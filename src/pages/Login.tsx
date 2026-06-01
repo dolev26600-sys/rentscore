@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Home, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { supabase, hashPassword } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
@@ -30,39 +30,48 @@ export default function Login() {
       }
       setUser(data);
       toast.success(`שלום, ${data.full_name}!`);
-      navigate(data.user_type === 'tenant' ? '/tenant/home' : '/landlord/home');
+      // Check if this landlord is an agent
+      const agentFlag = localStorage.getItem(`rentscore_agent_${data.id}`);
+      if (data.user_type === 'tenant') navigate('/tenant/home');
+      else if (agentFlag) navigate('/agent/home');
+      else navigate('/landlord/home');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <div className="bg-gradient-to-b from-tenant-700 to-tenant-600 pt-12 pb-10 px-6 text-center">
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md">
-            <Home className="w-6 h-6 text-tenant-600" />
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col" dir="rtl">
+
+      {/* Top brand strip */}
+      <div className="px-6 pt-14 pb-10 text-center">
+        <div className="flex items-center justify-center gap-2 mb-8">
+          <div className="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center shadow-sm">
+            <Zap className="w-4.5 h-4.5 text-white" style={{ width: 18, height: 18 }} />
           </div>
-          <span className="text-white font-black text-2xl">RentScore</span>
+          <span className="font-black text-gray-900 text-[20px] tracking-tight">RentScore</span>
         </div>
-        <h1 className="text-white text-xl font-bold opacity-90">ברוך הבא בחזרה</h1>
+        <h1 className="text-[26px] font-black text-gray-900 leading-tight mb-2">ברוך הבא בחזרה</h1>
+        <p className="text-gray-400 text-[14px]">התחבר לחשבון שלך</p>
       </div>
 
-      <div className="flex-1 px-6 py-8">
-        <div className="card p-6 animate-scale-in">
-          <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Form card */}
+      <div className="flex-1 px-5">
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 animate-scale-in">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">דוא"ל</label>
+              <label className="block text-[13px] font-bold text-gray-500 mb-1.5 uppercase tracking-wide">דוא"ל</label>
               <input
                 type="email"
                 placeholder="you@example.com"
                 value={form.email}
                 onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
                 className="input-field"
+                dir="ltr"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">סיסמה</label>
+              <label className="block text-[13px] font-bold text-gray-500 mb-1.5 uppercase tracking-wide">סיסמה</label>
               <div className="relative">
                 <input
                   type={showPw ? 'text' : 'password'}
@@ -74,7 +83,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -91,18 +100,21 @@ export default function Login() {
           </form>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-5">
-          אין לך חשבון?{' '}
-          <Link to="/signup" className="font-bold text-tenant-600 hover:underline">הרשם עכשיו</Link>
-        </p>
+        <div className="mt-5 space-y-3">
+          <p className="text-center text-sm text-gray-500">
+            אין לך חשבון?{' '}
+            <Link to="/signup" className="font-bold text-teal-600 hover:underline">הרשם עכשיו</Link>
+          </p>
 
-        <button
-          onClick={() => navigate('/demo')}
-          className="w-full mt-3 border-2 border-gray-200 rounded-2xl py-3 text-gray-500 font-medium text-sm hover:border-gray-300 transition-colors"
-        >
-          צפה בדמו ללא הרשמה
-        </button>
+          <button
+            onClick={() => navigate('/demo')}
+            className="w-full border-2 border-gray-200 bg-white rounded-2xl py-3 text-gray-500 font-semibold text-sm hover:border-gray-300 transition-colors"
+          >
+            צפה בדמו ללא הרשמה ←
+          </button>
+        </div>
       </div>
+
     </div>
   );
 }
