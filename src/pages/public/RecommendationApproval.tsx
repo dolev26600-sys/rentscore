@@ -14,6 +14,7 @@ export default function RecommendationApproval() {
   const [tenantName, setTenantName] = useState('');
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
+  const [landlordPhone, setLandlordPhone] = useState('');
   const [hoverRating, setHoverRating] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -46,6 +47,7 @@ export default function RecommendationApproval() {
         comment: comment.trim(),
         verified: true,
         address: request.address || null,
+        landlord_phone: landlordPhone.trim() || null,
       });
 
       if (recErr) throw recErr;
@@ -179,6 +181,20 @@ export default function RecommendationApproval() {
           </p>
         </div>
 
+        {/* Phone */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+          <label className="block font-bold text-gray-800 mb-1">מספר הטלפון שלך *</label>
+          <p className="text-gray-400 text-xs mb-3">לא יוצג בפרופיל. משמש לאימות שאתה בעל הנכס האמיתי.</p>
+          <input
+            type="tel"
+            placeholder="050-0000000"
+            value={landlordPhone}
+            onChange={e => setLandlordPhone(e.target.value)}
+            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-400"
+            dir="ltr"
+          />
+        </div>
+
         {/* Comment */}
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
           <label className="block font-bold text-gray-800 mb-3">כתוב כמה מילים *</label>
@@ -195,7 +211,7 @@ export default function RecommendationApproval() {
         {/* Submit */}
         <button
           onClick={submit}
-          disabled={!comment.trim() || loading}
+          disabled={!comment.trim() || !landlordPhone.trim() || loading}
           className="btn btn-tenant btn-lg w-full"
         >
           {loading ? <><span className="spinner" /> שומר...</> : <>
