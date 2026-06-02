@@ -28,8 +28,8 @@ export default function BottomNav() {
       style={{
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
-        background: 'rgba(5,10,24,0.85)',
-        borderTop: '1px solid rgba(255,255,255,0.08)',
+        background: 'rgba(15,23,42,0.9)',
+        borderTop: '1px solid rgba(248,250,252,0.07)',
         paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
       }}>
       <div className="flex justify-around pt-2 pb-1">
@@ -40,18 +40,18 @@ export default function BottomNav() {
               className="flex flex-col items-center px-6 pt-2 pb-1 relative transition-all active:scale-90">
               {active && (
                 <span className="absolute top-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full"
-                  style={{ background: '#00B89F' }} />
+                  style={{ background: '#F59E0B' }} />
               )}
               <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${active ? '' : ''}`}
-                style={active ? { background:'rgba(0,184,159,0.15)' } : {}}>
+                style={active ? { background:'rgba(245,158,11,0.12)' } : {}}>
                 <Icon style={{
                   width: 20, height: 20,
-                  color: active ? '#00D4B8' : 'rgba(255,255,255,0.35)',
+                  color: active ? '#F59E0B' : 'rgba(248,250,252,0.3)',
                   transition: 'all 0.2s',
                 }} />
               </div>
               <span className="text-[10px] font-bold mt-0.5 transition-colors"
-                style={{ color: active ? '#00D4B8' : 'rgba(255,255,255,0.25)' }}>
+                style={{ color: active ? '#F59E0B' : 'rgba(248,250,252,0.25)' }}>
                 {label}
               </span>
             </Link>

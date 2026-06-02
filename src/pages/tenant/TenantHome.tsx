@@ -1,18 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Share2, CheckCircle, Star, Zap, LogOut, TrendingUp, Shield } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
-import ScoreCircle from '../../components/ScoreCircle';
 import BottomNav from '../../components/BottomNav';
 
 interface Profile { score: number; income_verified: boolean; years_renting: number; }
 
-function ScoreTag({ score }: { score: number }) {
-  if (score >= 85) return <span className="badge badge-green">מצוין</span>;
-  if (score >= 70) return <span className="badge badge-teal">טוב מאוד</span>;
-  if (score >= 55) return <span className="badge badge-amber">טוב</span>;
-  return <span className="badge badge-gray">בסיסי</span>;
+function ScoreRing({ score }: { score: number }) {
+  const r = 52;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - score / 100);
+  const color = score >= 85 ? '#22C55E' : score >= 70 ? '#F59E0B' : score >= 55 ? '#F59E0B' : '#6B7280';
+  return (
+    <div style={{ position:'relative', width:120, height:120, display:'flex', alignItems:'center', justifyContent:'center' }}>
+      <svg width="120" height="120" viewBox="0 0 120 120" style={{ transform:'rotate(-90deg)', position:'absolute' }}>
+        <circle cx="60" cy="60" r={r} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="8"/>
+        <circle cx="60" cy="60" r={r} fill="none" stroke="url(#rg)" strokeWidth="8"
+          strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={offset}/>
+        <defs>
+          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#F59E0B"/>
+            <stop offset="100%" stopColor="#8B5CF6"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div style={{ textAlign:'center', position:'relative', zIndex:1 }}>
+        <div style={{ color:'#F8FAFC', fontSize:36, fontWeight:700, lineHeight:1, letterSpacing:'-1px' }}>{score}</div>
+        <div style={{ color:'rgba(248,250,252,0.3)', fontSize:10, fontWeight:500, marginTop:2, letterSpacing:'0.5px' }}>SCORE</div>
+      </div>
+    </div>
+  );
+}
+
+function ScoreBadge({ score }: { score: number }) {
+  if (score >= 85) return <span style={{ fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:99, background:'rgba(34,197,94,0.15)', color:'#22C55E', border:'1px solid rgba(34,197,94,0.25)' }}>מצוין</span>;
+  if (score >= 70) return <span style={{ fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:99, background:'rgba(245,158,11,0.15)', color:'#F59E0B', border:'1px solid rgba(245,158,11,0.25)' }}>טוב מאוד</span>;
+  if (score >= 55) return <span style={{ fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:99, background:'rgba(245,158,11,0.1)', color:'#FBBF24', border:'1px solid rgba(245,158,11,0.2)' }}>טוב</span>;
+  return <span style={{ fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:99, background:'rgba(107,114,128,0.15)', color:'#9CA3AF', border:'1px solid rgba(107,114,128,0.2)' }}>בסיסי</span>;
 }
 
 export default function TenantHome() {
@@ -37,142 +61,139 @@ export default function TenantHome() {
   const firstName = user?.full_name?.split(' ')[0] || '';
 
   const tasks = [
-    { label: 'בקש המלצה מאומתת מבעל נכס קודם', pts: 5, done: recCount > 0, path: '/tenant/request-rec' },
-    { label: 'השלם את פרטי הפרופיל שלך', pts: 4, done: score > 60, path: '/tenant/profile' },
-    { label: 'הוסף טווח תקציב', pts: 2, done: false, path: '/tenant/share-profile' },
+    { label:'בקש המלצה מאומתת מבעל נכס קודם', pts:5, done: recCount > 0, path:'/tenant/request-rec' },
+    { label:'השלם את פרטי הפרופיל שלך', pts:4, done: score > 60, path:'/tenant/profile' },
+    { label:'הוסף טווח תקציב', pts:2, done:false, path:'/tenant/share-profile' },
   ].filter(t => !t.done).slice(0, 3);
 
-  const stats = [
-    { label: 'המלצות', value: recCount, sub: verifiedRecs > 0 ? `${verifiedRecs} מאומת` : null, icon: Star, color: '#F59E0B', bg: 'rgba(245,158,11,0.15)' },
-    { label: 'אימותים', value: profile?.income_verified ? 1 : 0, sub: 'מתוך 2', icon: CheckCircle, color: '#00B89F', bg: 'rgba(0,184,159,0.15)' },
-    { label: 'שנות ניסיון', value: profile?.years_renting || 0, sub: null, icon: Shield, color: '#7C3AED', bg: 'rgba(124,58,237,0.15)' },
-  ];
+  const glassCard: React.CSSProperties = {
+    background: 'rgba(248,250,252,0.04)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    border: '1px solid rgba(248,250,252,0.08)',
+    borderRadius: 20,
+  };
 
   return (
-    <div className="min-h-screen pb-28 overflow-hidden" style={{ background: '#050A18' }} dir="rtl">
+    <div dir="rtl" style={{ minHeight:'100vh', background:'#0F172A', fontFamily:"'IBM Plex Sans','Heebo',sans-serif", paddingBottom:100, overflowX:'hidden', position:'relative' }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');`}</style>
 
-      {/* Background glows */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div style={{ position:'absolute', top:'-10%', right:'-5%', width:300, height:300, borderRadius:'50%', background:'radial-gradient(circle, rgba(0,184,159,0.12) 0%, transparent 70%)', filter:'blur(40px)' }} />
-        <div style={{ position:'absolute', top:'40%', left:'-10%', width:250, height:250, borderRadius:'50%', background:'radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%)', filter:'blur(40px)' }} />
+      {/* Background */}
+      <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0 }}>
+        <div style={{ position:'absolute', top:'-10%', right:'-5%', width:350, height:350, borderRadius:'50%', background:'radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 65%)', filter:'blur(50px)' }} />
+        <div style={{ position:'absolute', bottom:'20%', left:'-8%', width:300, height:300, borderRadius:'50%', background:'radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 65%)', filter:'blur(50px)' }} />
+        <div style={{ position:'absolute', inset:0, backgroundImage:'linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px)', backgroundSize:'40px 40px' }} />
       </div>
 
-      {/* Hero */}
-      <div className="relative px-5 pt-14 pb-6">
-        <div className="flex justify-between items-start mb-6">
+      {/* Header */}
+      <div style={{ position:'relative', zIndex:1, padding:'52px 20px 20px' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24 }}>
           <div>
-            <p className="text-[13px] font-medium mb-0.5" style={{ color:'rgba(255,255,255,0.4)' }}>שלום, {firstName} 👋</p>
-            <p className="text-white font-black text-[22px]">הפרופיל שלי</p>
+            <p style={{ color:'rgba(248,250,252,0.35)', fontSize:13, margin:'0 0 2px' }}>שלום, {firstName}</p>
+            <p style={{ color:'#F8FAFC', fontWeight:700, fontSize:22, margin:0, letterSpacing:'-0.3px' }}>הפרופיל שלי</p>
           </div>
-          <button onClick={logout}
-            className="w-10 h-10 rounded-2xl flex items-center justify-center"
-            style={{ background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.1)' }}>
-            <LogOut style={{ width:16, height:16, color:'rgba(255,255,255,0.5)' }} />
+          <button onClick={logout} style={{ width:40, height:40, borderRadius:14, background:'rgba(248,250,252,0.06)', border:'1px solid rgba(248,250,252,0.1)', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(248,250,252,0.4)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
           </button>
         </div>
 
-        {/* Score glass card */}
-        <div className="rounded-3xl p-5 flex items-center gap-5"
-          style={{ background:'rgba(255,255,255,0.06)', backdropFilter:'blur(20px)', WebkitBackdropFilter:'blur(20px)', border:'1px solid rgba(255,255,255,0.1)', boxShadow:'0 8px 32px rgba(0,0,0,0.3)' }}>
-          <ScoreCircle score={score} size={90} color="#fff" bgColor="rgba(255,255,255,0.08)" />
-          <div>
-            <div className="flex items-baseline gap-2 mb-2">
-              <span className="text-[48px] font-black text-white leading-none">{score}</span>
-              <span className="text-[16px] font-medium" style={{ color:'rgba(255,255,255,0.25)' }}>/ 100</span>
+        {/* Score card */}
+        <div style={{ ...glassCard, padding:20, display:'flex', alignItems:'center', gap:20, marginBottom:16, position:'relative', overflow:'hidden' }}>
+          {/* Glow behind card */}
+          <div style={{ position:'absolute', top:-30, right:-30, width:150, height:150, borderRadius:'50%', background:'radial-gradient(circle, rgba(245,158,11,0.15) 0%, transparent 70%)', pointerEvents:'none' }} />
+          <ScoreRing score={score} />
+          <div style={{ flex:1 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
+              <span style={{ color:'#F8FAFC', fontSize:48, fontWeight:700, lineHeight:1, letterSpacing:'-2px' }}>{score}</span>
+              <span style={{ color:'rgba(248,250,252,0.2)', fontSize:18, fontWeight:400 }}>/100</span>
             </div>
-            <ScoreTag score={score} />
-            <p className="text-[11px] mt-1.5" style={{ color:'rgba(255,255,255,0.35)' }}>
-              {score < 70 ? 'השלם משימות לציון גבוה יותר' : 'שתף את הפרופיל שלך!'}
+            <ScoreBadge score={score} />
+            <p style={{ color:'rgba(248,250,252,0.3)', fontSize:11, margin:'8px 0 0', lineHeight:1.5 }}>
+              {score < 70 ? 'השלם משימות לשיפור הציון' : 'פרופיל חזק — שתף עם בעלי נכסים'}
             </p>
           </div>
         </div>
-      </div>
-
-      <div className="relative px-4 space-y-3">
-
-        {/* Share CTA */}
-        <button onClick={() => navigate('/tenant/share-profile')}
-          className="w-full rounded-2xl px-5 py-4 flex items-center justify-between transition-all active:scale-[0.98]"
-          style={{ background:'linear-gradient(135deg,#00B89F 0%,#009E88 100%)', boxShadow:'0 6px 24px rgba(0,184,159,0.3)' }}>
-          <div className="text-right">
-            <p className="font-black text-[15px] text-white">שתף את הפרופיל שלך</p>
-            <p className="text-[11px] mt-0.5" style={{ color:'rgba(255,255,255,0.7)' }}>שלח לבעל הנכס לפני הצפייה</p>
-          </div>
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background:'rgba(255,255,255,0.15)' }}>
-            <Share2 style={{ width:18, height:18, color:'#fff' }} />
-          </div>
-        </button>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-2">
-          {stats.map(({ label, value, sub, icon: Icon, color, bg }) => (
-            <div key={label} className="rounded-2xl p-3.5 text-center"
-              style={{ background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)' }}>
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center mx-auto mb-2" style={{ background: bg }}>
-                <Icon style={{ width:15, height:15, color }} />
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:16 }}>
+          {[
+            { label:'המלצות', value:recCount, sub: verifiedRecs > 0 ? `${verifiedRecs} מאומת` : null, color:'#F59E0B', bg:'rgba(245,158,11,0.1)' },
+            { label:'אימותים', value: profile?.income_verified ? 1 : 0, sub:'מתוך 2', color:'#22C55E', bg:'rgba(34,197,94,0.1)' },
+            { label:'שנות ניסיון', value: profile?.years_renting || 0, sub:null, color:'#8B5CF6', bg:'rgba(139,92,246,0.1)' },
+          ].map(({ label, value, sub, color, bg }) => (
+            <div key={label} style={{ ...glassCard, padding:'14px 10px', textAlign:'center' }}>
+              <div style={{ width:32, height:32, borderRadius:10, background:bg, margin:'0 auto 8px', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <div style={{ width:10, height:10, borderRadius:'50%', background:color, boxShadow:`0 0 8px ${color}` }} />
               </div>
-              <p className="text-[22px] font-black text-white leading-none">{value}</p>
-              <p className="text-[10px] font-semibold mt-1" style={{ color:'rgba(255,255,255,0.35)' }}>{label}</p>
-              {sub && <p className="text-[10px] font-bold mt-0.5" style={{ color }}>{sub}</p>}
+              <p style={{ color:'#F8FAFC', fontSize:22, fontWeight:700, margin:'0 0 2px', lineHeight:1 }}>{value}</p>
+              <p style={{ color:'rgba(248,250,252,0.3)', fontSize:10, margin:0, letterSpacing:'0.2px' }}>{label}</p>
+              {sub && <p style={{ color, fontSize:10, fontWeight:700, margin:'3px 0 0' }}>{sub}</p>}
             </div>
           ))}
         </div>
 
+        {/* Share CTA */}
+        <button onClick={() => navigate('/tenant/share-profile')} style={{
+          width:'100%', background:'linear-gradient(135deg,#F59E0B 0%,#D97706 100%)',
+          border:'none', borderRadius:18, padding:'16px 20px',
+          display:'flex', alignItems:'center', justifyContent:'space-between',
+          boxShadow:'0 6px 24px rgba(245,158,11,0.3)', marginBottom:16,
+          fontFamily:'inherit', cursor:'pointer',
+        }}>
+          <div style={{ textAlign:'right' }}>
+            <p style={{ color:'#0F172A', fontWeight:700, fontSize:15, margin:0 }}>שתף את הפרופיל שלך</p>
+            <p style={{ color:'rgba(15,23,42,0.55)', fontSize:11, margin:'3px 0 0' }}>שלח לבעל הנכס לפני הצפייה</p>
+          </div>
+          <div style={{ width:38, height:38, borderRadius:12, background:'rgba(15,23,42,0.12)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0F172A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </div>
+        </button>
+
         {/* Tasks */}
         {tasks.length > 0 && (
-          <div className="rounded-2xl overflow-hidden"
-            style={{ background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)' }}>
-            <div className="px-4 py-3 flex items-center justify-between"
-              style={{ borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-              <div className="flex items-center gap-2">
-                <TrendingUp style={{ width:15, height:15, color:'#00B89F' }} />
-                <p className="font-bold text-white text-[13px]">שפר את הציון</p>
+          <div style={{ ...glassCard, overflow:'hidden', marginBottom:16 }}>
+            <div style={{ padding:'14px 18px', borderBottom:'1px solid rgba(248,250,252,0.06)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <span style={{ color:'#F8FAFC', fontWeight:700, fontSize:13 }}>שפר את הציון</span>
               </div>
-              <span className="text-[10px] font-black px-2.5 py-1 rounded-full"
-                style={{ background:'rgba(0,184,159,0.15)', color:'#00D4B8' }}>
-                {tasks.length} משימות
-              </span>
+              <span style={{ fontSize:10, fontWeight:700, padding:'3px 8px', borderRadius:99, background:'rgba(245,158,11,0.12)', color:'#F59E0B' }}>{tasks.length} משימות</span>
             </div>
             {tasks.map((t, i) => (
-              <button key={t.label} onClick={() => navigate(t.path)}
-                className="w-full flex items-center gap-3 px-4 py-3.5 text-right transition-all active:bg-white/5"
-                style={{ borderBottom: i < tasks.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                  style={{ background:'rgba(255,255,255,0.07)' }}>
-                  <CheckCircle style={{ width:14, height:14, color:'rgba(255,255,255,0.2)' }} />
+              <button key={t.label} onClick={() => navigate(t.path)} style={{
+                width:'100%', display:'flex', alignItems:'center', gap:12,
+                padding:'14px 18px', textAlign:'right', fontFamily:'inherit', cursor:'pointer',
+                background:'none', border:'none',
+                borderBottom: i < tasks.length - 1 ? '1px solid rgba(248,250,252,0.05)' : 'none',
+              }}>
+                <div style={{ width:28, height:28, borderRadius:10, background:'rgba(248,250,252,0.06)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(248,250,252,0.25)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
-                <span className="flex-1 text-[13px] font-medium" style={{ color:'rgba(255,255,255,0.65)' }}>{t.label}</span>
-                <span className="text-[11px] font-black px-2 py-0.5 rounded-full flex-shrink-0"
-                  style={{ background:'rgba(0,184,159,0.15)', color:'#00D4B8' }}>+{t.pts}</span>
+                <span style={{ flex:1, fontSize:13, color:'rgba(248,250,252,0.6)', fontWeight:500 }}>{t.label}</span>
+                <span style={{ fontSize:11, fontWeight:700, padding:'2px 8px', borderRadius:99, background:'rgba(34,197,94,0.12)', color:'#22C55E', flexShrink:0 }}>+{t.pts}</span>
               </button>
             ))}
           </div>
         )}
 
         {/* Quick actions */}
-        <div className="grid grid-cols-2 gap-2.5">
-          <button onClick={() => navigate('/ai-tools')}
-            className="rounded-2xl p-4 text-right transition-all active:scale-[0.97]"
-            style={{ background:'rgba(124,58,237,0.1)', border:'1px solid rgba(124,58,237,0.2)' }}>
-            <div className="w-10 h-10 rounded-2xl mb-3 flex items-center justify-center" style={{ background:'rgba(124,58,237,0.2)' }}>
-              <Zap style={{ width:18, height:18, color:'#A78BFA' }} />
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+          <button onClick={() => navigate('/ai-tools')} style={{ ...glassCard, padding:'18px 16px', textAlign:'right', cursor:'pointer', fontFamily:'inherit', border:'1px solid rgba(139,92,246,0.2)', background:'rgba(139,92,246,0.08)' }}>
+            <div style={{ width:40, height:40, borderRadius:14, background:'rgba(139,92,246,0.15)', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:12 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             </div>
-            <p className="font-black text-[13px] text-white">כלי AI</p>
-            <p className="text-[11px] mt-0.5" style={{ color:'rgba(255,255,255,0.35)' }}>ניתוח חוזה, הודעות</p>
+            <p style={{ color:'#F8FAFC', fontWeight:700, fontSize:13, margin:'0 0 4px' }}>כלי AI</p>
+            <p style={{ color:'rgba(248,250,252,0.3)', fontSize:11, margin:0 }}>ניתוח חוזה, הודעות</p>
           </button>
 
-          <button onClick={() => navigate('/tenant/request-rec')}
-            className="rounded-2xl p-4 text-right transition-all active:scale-[0.97]"
-            style={{ background:'rgba(245,158,11,0.1)', border:'1px solid rgba(245,158,11,0.2)' }}>
-            <div className="w-10 h-10 rounded-2xl mb-3 flex items-center justify-center" style={{ background:'rgba(245,158,11,0.2)' }}>
-              <Star style={{ width:18, height:18, color:'#FCD34D' }} />
+          <button onClick={() => navigate('/tenant/request-rec')} style={{ ...glassCard, padding:'18px 16px', textAlign:'right', cursor:'pointer', fontFamily:'inherit', border:'1px solid rgba(245,158,11,0.2)', background:'rgba(245,158,11,0.08)' }}>
+            <div style={{ width:40, height:40, borderRadius:14, background:'rgba(245,158,11,0.15)', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:12 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             </div>
-            <p className="font-black text-[13px] text-white">המלצה מאומתת</p>
-            <p className="text-[11px] mt-0.5" style={{ color:'rgba(255,255,255,0.35)' }}>+5 נקודות לציון</p>
+            <p style={{ color:'#F8FAFC', fontWeight:700, fontSize:13, margin:'0 0 4px' }}>המלצה מאומתת</p>
+            <p style={{ color:'rgba(248,250,252,0.3)', fontSize:11, margin:0 }}>+5 נקודות לציון</p>
           </button>
-
         </div>
-
       </div>
 
       <BottomNav />
