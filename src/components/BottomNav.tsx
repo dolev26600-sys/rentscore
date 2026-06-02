@@ -10,46 +10,48 @@ export default function BottomNav() {
   if (!user) return null;
 
   const tenantItems = [
-    { to: '/tenant/home', icon: Home, label: 'בית' },
-    { to: '/tenant/profile', icon: User, label: 'פרופיל' },
-    { to: '/tenant/guides', icon: BookOpen, label: 'מדריכים' },
+    { to: '/tenant/home',    icon: Home,      label: 'בית' },
+    { to: '/tenant/profile', icon: User,      label: 'פרופיל' },
+    { to: '/tenant/guides',  icon: BookOpen,  label: 'מדריכים' },
   ];
 
   const landlordItems = [
-    { to: '/landlord/home', icon: Home, label: 'בית' },
+    { to: '/landlord/home',       icon: Home,      label: 'בית' },
     { to: '/landlord/properties', icon: Building2, label: 'נכסים' },
-    { to: '/landlord/profile', icon: User, label: 'פרופיל' },
+    { to: '/landlord/profile',    icon: User,      label: 'פרופיל' },
   ];
 
   const items = user.user_type === 'tenant' ? tenantItems : landlordItems;
-  const isTenant = user.user_type === 'tenant';
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-20 pb-safe" style={{ backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', background: 'rgba(255,255,255,0.92)', borderTop: '1px solid rgba(0,0,0,0.07)' }}>
-      <div className="flex justify-around py-1">
+    <nav className="fixed bottom-0 left-0 right-0 z-20"
+      style={{
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        background: 'rgba(5,10,24,0.85)',
+        borderTop: '1px solid rgba(255,255,255,0.08)',
+        paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+      }}>
+      <div className="flex justify-around pt-2 pb-1">
         {items.map(({ to, icon: Icon, label }) => {
           const active = location.pathname === to;
-          const activeColor = isTenant ? '#0d9488' : '#d97706';
           return (
-            <Link
-              key={to}
-              to={to}
-              className="flex flex-col items-center py-2 px-5 relative transition-transform active:scale-90"
-            >
+            <Link key={to} to={to}
+              className="flex flex-col items-center px-6 pt-2 pb-1 relative transition-all active:scale-90">
               {active && (
-                <span
-                  className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-1 rounded-full"
-                  style={{ background: activeColor }}
-                />
+                <span className="absolute top-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full"
+                  style={{ background: '#00B89F' }} />
               )}
-              <Icon
-                className="w-6 h-6 transition-all"
-                style={{ color: active ? activeColor : '#94a3b8', transform: active ? 'scale(1.1)' : 'scale(1)' }}
-              />
-              <span
-                className="text-xs mt-0.5 font-semibold transition-colors"
-                style={{ color: active ? activeColor : '#94a3b8' }}
-              >
+              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${active ? '' : ''}`}
+                style={active ? { background:'rgba(0,184,159,0.15)' } : {}}>
+                <Icon style={{
+                  width: 20, height: 20,
+                  color: active ? '#00D4B8' : 'rgba(255,255,255,0.35)',
+                  transition: 'all 0.2s',
+                }} />
+              </div>
+              <span className="text-[10px] font-bold mt-0.5 transition-colors"
+                style={{ color: active ? '#00D4B8' : 'rgba(255,255,255,0.25)' }}>
                 {label}
               </span>
             </Link>

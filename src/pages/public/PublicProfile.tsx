@@ -269,12 +269,7 @@ export default function PublicProfile({ isDemo = false }: { isDemo?: boolean }) 
         </p>
       </div>
 
-      {/* ── Footer ── */}
-      <div className="text-center py-8">
-        <button onClick={() => navigate('/')} className="text-xs font-medium transition-colors" style={{ color: '#B0B7C3' }}>
-          מופעל על ידי <span className="font-black" style={{ color: '#05A88C' }}>RentScore</span> · צור פרופיל שוכר חינם
-        </button>
-      </div>
+      <div className="pb-10" />
     </div>
   );
 }
