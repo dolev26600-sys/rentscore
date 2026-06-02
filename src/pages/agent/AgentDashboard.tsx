@@ -96,7 +96,7 @@ export default function AgentDashboard() {
   };
 
   return (
-    <div dir="rtl" style={{ minHeight: '100vh', background: '#07080F', fontFamily: "'Heebo', sans-serif", overflowX: 'hidden', position: 'relative' }}>
+    <div dir="rtl" style={{ minHeight: '100vh', background: '#18243A', fontFamily: "'Heebo', sans-serif", overflowX: 'hidden', position: 'relative' }}>
 
       {/* Ambient */}
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
@@ -190,7 +190,7 @@ export default function AgentDashboard() {
                 <button key={city} onClick={() => setFilterCity(city === 'הכל' ? '' : city)} style={{
                   flexShrink: 0, fontSize: 12, padding: '7px 14px', borderRadius: 999, fontFamily: 'inherit', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s',
                   background: (city === 'הכל' && !filterCity) || filterCity === city ? '#00D4BA' : 'rgba(255,255,255,0.06)',
-                  color: (city === 'הכל' && !filterCity) || filterCity === city ? '#07080F' : 'rgba(255,255,255,0.5)',
+                  color: (city === 'הכל' && !filterCity) || filterCity === city ? '#18243A' : 'rgba(255,255,255,0.5)',
                   border: (city === 'הכל' && !filterCity) || filterCity === city ? 'none' : '1px solid rgba(255,255,255,0.1)',
                 }}>
                   {city}

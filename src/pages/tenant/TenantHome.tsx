@@ -75,7 +75,7 @@ export default function TenantHome() {
   };
 
   return (
-    <div dir="rtl" style={{ minHeight:'100vh', background:'#0F172A', fontFamily:"'IBM Plex Sans','Heebo',sans-serif", paddingBottom:100, overflowX:'hidden', position:'relative' }}>
+    <div dir="rtl" style={{ minHeight:'100vh', background:'#18243A', fontFamily:"'IBM Plex Sans','Heebo',sans-serif", paddingBottom:100, overflowX:'hidden', position:'relative' }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');`}</style>
 
       {/* Background */}
@@ -137,15 +137,15 @@ export default function TenantHome() {
           width:'100%', background:'linear-gradient(135deg,#F59E0B 0%,#D97706 100%)',
           border:'none', borderRadius:18, padding:'16px 20px',
           display:'flex', alignItems:'center', justifyContent:'space-between',
-          boxShadow:'0 6px 24px rgba(245,158,11,0.3)', marginBottom:16,
+          boxShadow:'0 6px 24px rgba(6,182,212,0.3)', marginBottom:16,
           fontFamily:'inherit', cursor:'pointer',
         }}>
           <div style={{ textAlign:'right' }}>
-            <p style={{ color:'#0F172A', fontWeight:700, fontSize:15, margin:0 }}>שתף את הפרופיל שלך</p>
-            <p style={{ color:'rgba(15,23,42,0.55)', fontSize:11, margin:'3px 0 0' }}>שלח לבעל הנכס לפני הצפייה</p>
+            <p style={{ color:'#fff', fontWeight:700, fontSize:15, margin:0 }}>שתף את הפרופיל שלך</p>
+            <p style={{ color:'rgba(255,255,255,0.7)', fontSize:11, margin:'3px 0 0' }}>שלח לבעל הנכס לפני הצפייה</p>
           </div>
-          <div style={{ width:38, height:38, borderRadius:12, background:'rgba(15,23,42,0.12)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0F172A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <div style={{ width:38, height:38, borderRadius:12, background:'rgba(255,255,255,0.15)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#18243A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
           </div>
         </button>
 

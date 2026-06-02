@@ -44,7 +44,7 @@ export default function Login() {
 
   return (
     <div dir="rtl" style={{
-      minHeight: '100vh', background: '#0F172A',
+      minHeight: '100vh', background: '#18243A',
       fontFamily: "'IBM Plex Sans', 'Heebo', sans-serif",
       display: 'flex', flexDirection: 'column',
       position: 'relative', overflowX: 'hidden',
@@ -70,7 +70,7 @@ export default function Login() {
       <div style={{ position:'relative', zIndex:1, textAlign:'center', padding:'32px 24px 28px' }}>
         <div style={{ display:'inline-flex', alignItems:'center', gap:10, marginBottom:28 }}>
           <div style={{ width:42, height:42, borderRadius:14, background:'linear-gradient(135deg,#F59E0B,#D97706)', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 0 24px rgba(245,158,11,0.4)' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F172A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#18243A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           </div>
           <span style={{ color:'#F8FAFC', fontWeight:700, fontSize:22 }}>RentScore</span>
         </div>
@@ -104,7 +104,7 @@ export default function Login() {
             <button type="submit" disabled={loading} style={{
               width:'100%', background: loading ? 'rgba(245,158,11,0.5)' : 'linear-gradient(135deg,#F59E0B,#D97706)',
               border:'none', borderRadius:16, padding:'16px 24px',
-              color:'#0F172A', fontSize:16, fontWeight:700, fontFamily:'inherit',
+              color:'#18243A', fontSize:16, fontWeight:700, fontFamily:'inherit',
               cursor: loading ? 'not-allowed' : 'pointer',
               boxShadow:'0 6px 24px rgba(245,158,11,0.35)',
             }}>

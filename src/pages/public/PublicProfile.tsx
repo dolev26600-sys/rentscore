@@ -89,14 +89,14 @@ export default function PublicProfile({ isDemo = false }: { isDemo?: boolean }) 
   }, [id, isDemo]);
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#07080F', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: '100vh', background: '#18243A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ width: 40, height: 40, borderRadius: '50%', border: '3px solid rgba(0,212,186,0.3)', borderTopColor: '#00D4BA', animation: 'spin 0.8s linear infinite' }} />
       <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   );
 
   if (error) return (
-    <div dir="rtl" style={{ minHeight: '100vh', background: '#07080F', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: '0 24px', textAlign: 'center', fontFamily: "'Heebo', sans-serif" }}>
+    <div dir="rtl" style={{ minHeight: '100vh', background: '#18243A', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: '0 24px', textAlign: 'center', fontFamily: "'Heebo', sans-serif" }}>
       <div style={{ fontSize: 56 }}>😕</div>
       <p style={{ color: '#fff', fontSize: 22, fontWeight: 900, margin: 0 }}>פרופיל לא נמצא</p>
       <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, margin: 0 }}>הקישור אינו תקין או שהפרופיל הוסר</p>
@@ -129,7 +129,7 @@ export default function PublicProfile({ isDemo = false }: { isDemo?: boolean }) 
   ].filter(r => r.value);
 
   return (
-    <div dir="rtl" style={{ minHeight: '100vh', background: '#07080F', fontFamily: "'Heebo', sans-serif", overflowX: 'hidden' }}>
+    <div dir="rtl" style={{ minHeight: '100vh', background: '#18243A', fontFamily: "'Heebo', sans-serif", overflowX: 'hidden' }}>
 
       {/* Ambient glow */}
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>

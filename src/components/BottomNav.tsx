@@ -28,7 +28,7 @@ export default function BottomNav() {
       style={{
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
-        background: 'rgba(15,23,42,0.9)',
+        background: 'rgba(24,36,58,0.9)',
         borderTop: '1px solid rgba(248,250,252,0.07)',
         paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
       }}>

@@ -57,7 +57,7 @@ export default function Signup() {
   return (
     <div dir="rtl" style={{
       minHeight: '100vh',
-      background: '#07080F',
+      background: '#18243A',
       fontFamily: "'Heebo', sans-serif",
       display: 'flex',
       flexDirection: 'column',

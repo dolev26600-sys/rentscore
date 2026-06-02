@@ -14,7 +14,7 @@ export default function Welcome() {
   return (
     <div dir="rtl" style={{
       minHeight: '100vh',
-      background: '#0F172A',
+      background: '#18243A',
       fontFamily: "'IBM Plex Sans', 'Heebo', sans-serif",
       display: 'flex',
       flexDirection: 'column',
@@ -65,9 +65,9 @@ export default function Welcome() {
 
         {/* Live counter badge */}
         <div style={{ display:'flex', justifyContent:'center', marginBottom:28 }}>
-          <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(245,158,11,0.1)', border:'1px solid rgba(245,158,11,0.25)', borderRadius:999, padding:'6px 16px' }}>
+          <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(6,182,212,0.1)', border:'1px solid rgba(6,182,212,0.25)', borderRadius:999, padding:'6px 16px' }}>
             <span style={{ width:7, height:7, borderRadius:'50%', background:'#22C55E', display:'inline-block', animation:'pulse 2s infinite', boxShadow:'0 0 6px #22C55E' }} />
-            <span style={{ color:'#F59E0B', fontWeight:600, fontSize:13 }}>{count.toLocaleString('he-IL')} שוכרים פעילים</span>
+            <span style={{ color:'#06B6D4', fontWeight:600, fontSize:13 }}>{count.toLocaleString('he-IL')} שוכרים פעילים</span>
           </div>
         </div>
 
@@ -134,20 +134,20 @@ export default function Welcome() {
         {/* Primary CTA */}
         <button onClick={() => navigate('/signup?type=tenant')} style={{
           width:'100%',
-          background:'linear-gradient(135deg,#F59E0B 0%,#D97706 100%)',
+          background:'linear-gradient(135deg,#06B6D4 0%,#0891B2 100%)',
           border:'none', borderRadius:18, padding:'18px 24px', cursor:'pointer',
           display:'flex', alignItems:'center', justifyContent:'space-between',
-          boxShadow:'0 8px 32px rgba(245,158,11,0.35)', marginBottom:10,
+          boxShadow:'0 8px 32px rgba(6,182,212,0.35)', marginBottom:10,
           fontFamily:'inherit', transition:'all 0.2s',
         }}>
           <div style={{ textAlign:'right' }}>
-            <p style={{ color:'#0F172A', fontWeight:700, fontSize:17, margin:0 }}>אני שוכר — צור פרופיל</p>
-            <p style={{ color:'rgba(15,23,42,0.6)', fontSize:12, fontWeight:500, margin:'3px 0 0' }}>חינמי תמיד · מוכן תוך 2 דקות</p>
+            <p style={{ color:'#fff', fontWeight:700, fontSize:17, margin:0 }}>אני שוכר — צור פרופיל</p>
+            <p style={{ color:'rgba(255,255,255,0.7)', fontSize:12, fontWeight:500, margin:'3px 0 0' }}>חינמי תמיד · מוכן תוך 2 דקות</p>
           </div>
           <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-            <span style={{ background:'rgba(15,23,42,0.15)', color:'#0F172A', fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:8 }}>חינם</span>
-            <div style={{ width:36, height:36, background:'rgba(15,23,42,0.12)', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0F172A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <span style={{ background:'rgba(255,255,255,0.2)', color:'#fff', fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:8 }}>חינם</span>
+            <div style={{ width:36, height:36, background:'rgba(255,255,255,0.15)', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#18243A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
             </div>
           </div>
         </button>
