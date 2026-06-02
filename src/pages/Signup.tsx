@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Zap, Eye, EyeOff, ChevronRight, Home, Building2 } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { supabase, hashPassword } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
@@ -40,108 +40,156 @@ export default function Signup() {
     } finally { setLoading(false); }
   };
 
-  const isTenant = userType === 'tenant';
-  const accentColor = isTenant ? '#00B89F' : '#0A1C3D';
+  const inputStyle = {
+    width: '100%', boxSizing: 'border-box' as const,
+    background: 'rgba(255,255,255,0.07)',
+    border: '1px solid rgba(255,255,255,0.12)',
+    borderRadius: 14, padding: '14px 16px',
+    color: '#fff', fontSize: 15, fontFamily: 'inherit',
+    outline: 'none',
+  };
+
+  const labelStyle = {
+    color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: 700,
+    display: 'block', marginBottom: 8, letterSpacing: '0.5px',
+  };
 
   return (
-    <div className="min-h-screen flex flex-col" dir="rtl"
-      style={{ background: 'linear-gradient(160deg,#060E1E 0%,#0E2240 60%,#0A2D3A 100%)' }}>
+    <div dir="rtl" style={{
+      minHeight: '100vh',
+      background: '#07080F',
+      fontFamily: "'Heebo', sans-serif",
+      display: 'flex',
+      flexDirection: 'column',
+      position: 'relative',
+      overflowX: 'hidden',
+    }}>
+      {/* Ambient glows */}
+      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
+        <div style={{ position: 'absolute', top: '-80px', right: '-60px', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,212,186,0.1) 0%, transparent 65%)', filter: 'blur(30px)' }} />
+        <div style={{ position: 'absolute', bottom: '10%', left: '-80px', width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(107,63,255,0.08) 0%, transparent 65%)', filter: 'blur(30px)' }} />
+      </div>
 
-      {/* Back */}
-      <div className="px-5 pt-12">
-        <button onClick={() => navigate('/')}
-          className="flex items-center gap-1.5 text-white/40 hover:text-white/70 transition-colors text-sm font-medium">
-          <ChevronRight className="w-4 h-4" />
+      {/* Back button */}
+      <div style={{ position: 'relative', zIndex: 1, padding: '48px 20px 0' }}>
+        <button onClick={() => navigate('/')} style={{
+          background: 'none', border: 'none', color: 'rgba(255,255,255,0.35)',
+          fontFamily: 'inherit', fontSize: 14, fontWeight: 600, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: 6,
+        }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           חזרה
         </button>
       </div>
 
       {/* Brand */}
-      <div className="px-6 pt-8 pb-5 text-center">
-        <div className="inline-flex items-center gap-2.5 mb-6">
-          <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ background: '#00B89F' }}>
-            <Zap className="w-5 h-5 text-white" />
+      <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', padding: '24px 24px 20px' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 14, background: 'linear-gradient(135deg,#00D4BA,#00A896)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(0,212,186,0.35)' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           </div>
-          <span className="font-black text-white text-[22px] tracking-tight">RentScore</span>
+          <span style={{ color: '#fff', fontWeight: 900, fontSize: 22, letterSpacing: '-0.5px' }}>RentScore</span>
         </div>
-        <h1 className="text-[26px] font-black text-white leading-tight mb-2">
+        <h1 style={{ color: '#fff', fontSize: 26, fontWeight: 900, margin: '0 0 6px', letterSpacing: '-0.5px' }}>
           {isAgent ? 'הרשמה לסוכנים' : 'יצירת חשבון חינמי'}
         </h1>
-        <p className="text-white/40 text-sm">
+        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13, margin: 0 }}>
           {isAgent ? 'גישה למאגר שוכרים מאומתים' : 'פרופיל שוכר מקצועי תוך 2 דקות'}
         </p>
       </div>
 
-      <div className="flex-1 px-5 space-y-4">
+      <div style={{ position: 'relative', zIndex: 1, flex: 1, padding: '0 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
 
         {/* Type selector */}
         {!isAgent && (
-          <div className="flex gap-2">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {([
-              { type: 'tenant', label: 'שוכר', Icon: Home, desc: 'חינם תמיד' },
-              { type: 'landlord', label: 'בעל נכס', Icon: Building2, desc: '79₪/בדיקה' },
-            ] as const).map(({ type, label, Icon, desc }) => (
-              <button key={type} onClick={() => setUserType(type)}
-                className={`flex-1 flex flex-col items-center gap-1 py-3.5 rounded-2xl border-2 transition-all ${
-                  userType === type
-                    ? 'border-transparent text-white' + (type === 'tenant' ? ' shadow-lg' : '')
-                    : 'border-white/10 text-white/40'
-                }`}
-                style={userType === type ? { background: type === 'tenant' ? '#00B89F' : '#0A1C3D' } : { background: 'rgba(255,255,255,0.05)' }}>
-                <Icon className="w-5 h-5" />
-                <span className="font-black text-sm">{label}</span>
-                <span className="text-[10px] opacity-70">{desc}</span>
+              { type: 'tenant' as const, label: 'שוכר', desc: 'חינם תמיד', emoji: '🏠' },
+              { type: 'landlord' as const, label: 'בעל נכס', desc: '79₪/בדיקה', emoji: '🏢' },
+            ]).map(({ type, label, desc, emoji }) => (
+              <button key={type} onClick={() => setUserType(type)} style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                padding: '14px 12px', borderRadius: 18,
+                border: userType === type ? '2px solid rgba(0,212,186,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                background: userType === type ? 'rgba(0,212,186,0.12)' : 'rgba(255,255,255,0.04)',
+                cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.2s',
+              }}>
+                <span style={{ fontSize: 22 }}>{emoji}</span>
+                <span style={{ color: userType === type ? '#00D4BA' : 'rgba(255,255,255,0.7)', fontWeight: 900, fontSize: 14 }}>{label}</span>
+                <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11 }}>{desc}</span>
               </button>
             ))}
           </div>
         )}
 
         {/* Form card */}
-        <div className="card p-6 anim-pop">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {[
-              { key: 'full_name', label: 'שם מלא', type: 'text', placeholder: 'ישראל ישראלי' },
-              { key: 'email',     label: 'דוא"ל',   type: 'email', placeholder: 'you@example.com', dir: 'ltr' },
-              { key: 'phone',     label: 'טלפון (אופציונלי)', type: 'tel', placeholder: '050-0000000' },
-            ].map(f => (
-              <div key={f.key}>
-                <label className="label mb-2 block">{f.label}</label>
-                <input type={f.type} placeholder={f.placeholder}
-                  value={(form as any)[f.key]}
-                  onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
-                  className="input-field" dir={(f as any).dir || 'rtl'} />
+        <div style={{
+          background: 'rgba(255,255,255,0.05)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: 24,
+          padding: 24,
+        }}>
+          <form onSubmit={handleSubmit}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <label style={labelStyle}>שם מלא</label>
+                <input type="text" placeholder="ישראל ישראלי" value={form.full_name}
+                  onChange={e => setForm(p => ({ ...p, full_name: e.target.value }))}
+                  style={inputStyle} />
               </div>
-            ))}
-
-            <div>
-              <label className="label mb-2 block">סיסמה</label>
-              <div className="relative">
-                <input type={showPw ? 'text' : 'password'} placeholder="לפחות 6 תווים"
-                  value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
-                  className="input-field" style={{ paddingLeft: 46 }} />
-                <button type="button" onClick={() => setShowPw(v => !v)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                  {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
+              <div>
+                <label style={labelStyle}>דוא"ל</label>
+                <input type="email" placeholder="you@example.com" value={form.email}
+                  onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+                  dir="ltr" style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>טלפון (אופציונלי)</label>
+                <input type="tel" placeholder="050-0000000" value={form.phone}
+                  onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
+                  style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>סיסמה</label>
+                <div style={{ position: 'relative' }}>
+                  <input type={showPw ? 'text' : 'password'} placeholder="לפחות 6 תווים"
+                    value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+                    style={{ ...inputStyle, paddingLeft: 48 }} />
+                  <button type="button" onClick={() => setShowPw(v => !v)} style={{
+                    position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: 'rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center',
+                  }}>
+                    {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
             </div>
 
-            <button type="submit" disabled={loading}
-              className={`btn btn-lg w-full mt-2 ${isTenant ? 'btn-primary' : 'btn-dark'}`}>
-              {loading ? <><span className="spinner" /> נרשם...</> : 'הרשמה חינמית'}
+            <button type="submit" disabled={loading} style={{
+              width: '100%', marginTop: 20,
+              background: loading ? 'rgba(0,212,186,0.5)' : 'linear-gradient(135deg,#00D4BA 0%,#00A896 100%)',
+              border: 'none', borderRadius: 16, padding: '16px 24px',
+              color: '#fff', fontSize: 16, fontWeight: 900,
+              fontFamily: 'inherit', cursor: loading ? 'not-allowed' : 'pointer',
+              boxShadow: '0 8px 30px rgba(0,212,186,0.3)',
+            }}>
+              {loading ? 'נרשם...' : 'הרשמה חינמית'}
             </button>
           </form>
 
-          <div className="divider my-4" />
+          <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '20px 0' }} />
 
-          <p className="text-center text-sm text-gray-500">
+          <p style={{ textAlign: 'center', fontSize: 14, color: 'rgba(255,255,255,0.35)', margin: 0 }}>
             כבר רשום?{' '}
-            <Link to="/login" className="font-bold" style={{ color: accentColor }}>התחבר</Link>
+            <Link to="/login" style={{ color: '#00D4BA', fontWeight: 700, textDecoration: 'none' }}>התחבר</Link>
           </p>
         </div>
-
       </div>
-      <div className="pb-12" />
+
+      <div style={{ height: 48 }} />
     </div>
   );
 }

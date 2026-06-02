@@ -1,38 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Send, Shield, LogOut, Copy, ChevronLeft, MapPin, Briefcase, TrendingUp, Users, Zap, CheckCircle } from 'lucide-react';
+import { Search, Send, Shield, LogOut, Copy, MapPin, Briefcase, TrendingUp, Users, CheckCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 
 interface TenantCard {
-  id: string;
-  full_name: string;
-  current_city: string;
-  employment_type: string;
-  score: number;
-  years_renting: number;
-  has_guarantor: boolean;
-  income_range: string;
-  user_id: string;
+  id: string; full_name: string; current_city: string; employment_type: string;
+  score: number; years_renting: number; has_guarantor: boolean; income_range: string; user_id: string;
+}
+
+function scoreColor(score: number) {
+  if (score >= 85) return '#00D4BA';
+  if (score >= 70) return '#00B89F';
+  if (score >= 55) return '#F59E0B';
+  return '#6B7280';
 }
 
 function ScoreRing({ score }: { score: number }) {
-  const color = score >= 85 ? '#059669' : score >= 70 ? '#0d9488' : score >= 55 ? '#d97706' : '#9ca3af';
+  const color = scoreColor(score);
   return (
-    <div className="w-11 h-11 flex-shrink-0 relative flex items-center justify-center rounded-full" style={{ background: `conic-gradient(${color} ${score}%, #f1f3f5 0)` }}>
-      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-        <span className="text-[11px] font-black" style={{ color }}>{score}</span>
+    <div style={{ width: 44, height: 44, borderRadius: '50%', background: `conic-gradient(${color} ${score}%, rgba(255,255,255,0.1) 0)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#0F1117', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ fontSize: 11, fontWeight: 900, color }}>{score}</span>
       </div>
     </div>
   );
 }
 
 function ScoreTag({ score }: { score: number }) {
-  if (score >= 85) return <span className="badge badge-green">מצוין</span>;
-  if (score >= 70) return <span className="badge badge-teal">טוב מאוד</span>;
-  if (score >= 55) return <span className="badge badge-amber">טוב</span>;
-  return <span className="badge badge-gray">בסיסי</span>;
+  const color = scoreColor(score);
+  const label = score >= 85 ? 'מצוין' : score >= 70 ? 'טוב מאוד' : score >= 55 ? 'טוב' : 'בסיסי';
+  return (
+    <span style={{ fontSize: 10, fontWeight: 800, padding: '3px 8px', borderRadius: 6, background: `${color}20`, color, border: `1px solid ${color}30` }}>{label}</span>
+  );
 }
 
 export default function AgentDashboard() {
@@ -49,11 +50,8 @@ export default function AgentDashboard() {
 
   useEffect(() => {
     if (!user) return;
-    supabase
-      .from('tenant_profiles')
-      .select('*, users!inner(full_name, id)')
-      .order('score', { ascending: false })
-      .limit(50)
+    supabase.from('tenant_profiles').select('*, users!inner(full_name, id)')
+      .order('score', { ascending: false }).limit(50)
       .then(({ data }) => {
         if (data) setTenants(data.map((p: any) => ({
           id: p.id, user_id: p.user_id,
@@ -82,7 +80,6 @@ export default function AgentDashboard() {
   };
 
   const filtered = tenants.filter(t => {
-    const q = search.toLowerCase();
     const matchSearch = !search || t.full_name.includes(search) || t.current_city.includes(search);
     const matchCity = !filterCity || t.current_city === filterCity;
     return matchSearch && matchCity;
@@ -90,103 +87,112 @@ export default function AgentDashboard() {
 
   const cities = [...new Set(tenants.map(t => t.current_city).filter(Boolean))];
 
-  return (
-    <div className="min-h-screen pb-10" style={{ background: '#f7f8fa' }} dir="rtl">
+  const cardStyle = {
+    background: 'rgba(255,255,255,0.05)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: 20,
+  };
 
-      {/* ── Header ── */}
-      <div className="bg-white border-b border-gray-100 px-5 pt-12 pb-5">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: '#0f172a' }}>
-              <Zap className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-black text-gray-900 text-[17px]">RentScore</span>
-            <span className="badge badge-gray">סוכן</span>
-          </div>
-          <button onClick={logout} className="w-9 h-9 bg-gray-50 hover:bg-gray-100 rounded-xl flex items-center justify-center transition-colors">
-            <LogOut className="w-4 h-4 text-gray-400" />
-          </button>
-        </div>
-        <h1 className="text-xl font-black text-gray-900">שלום, {user?.full_name?.split(' ')[0]}</h1>
-        <p className="text-gray-400 text-sm mt-0.5">{tenants.length} שוכרים במאגר</p>
+  return (
+    <div dir="rtl" style={{ minHeight: '100vh', background: '#07080F', fontFamily: "'Heebo', sans-serif", overflowX: 'hidden', position: 'relative' }}>
+
+      {/* Ambient */}
+      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
+        <div style={{ position: 'absolute', top: '-80px', right: '-60px', width: 350, height: 350, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,212,186,0.08) 0%, transparent 65%)', filter: 'blur(30px)' }} />
+        <div style={{ position: 'absolute', bottom: '15%', left: '-60px', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(107,63,255,0.06) 0%, transparent 65%)', filter: 'blur(30px)' }} />
       </div>
 
-      <div className="px-4 pt-4 space-y-3">
-
-        {/* ── Invite Banner ── */}
-        <button
-          onClick={() => setShowInvite(!showInvite)}
-          className="w-full card px-5 py-4 flex items-center justify-between hover:shadow-md transition-shadow"
-        >
-          <div className="text-right">
-            <p className="font-bold text-[15px] text-gray-900">הזמן שוכר למלא פרופיל</p>
-            <p className="text-gray-400 text-xs mt-0.5">שלח קישור — קבל פרופיל מלא תוך דקות</p>
+      {/* Header */}
+      <div style={{ position: 'relative', zIndex: 1, padding: '48px 20px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 12, background: 'linear-gradient(135deg,#00D4BA,#00A896)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,212,186,0.3)' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <span style={{ color: '#fff', fontWeight: 900, fontSize: 18 }}>RentScore</span>
+            <span style={{ fontSize: 10, fontWeight: 800, padding: '3px 8px', borderRadius: 6, background: 'rgba(0,212,186,0.12)', color: '#00D4BA', border: '1px solid rgba(0,212,186,0.2)' }}>סוכן</span>
           </div>
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#ccfbf1' }}>
-            <Send className="w-4 h-4" style={{ color: '#0d9488' }} />
+          <button onClick={logout} style={{ width: 36, height: 36, borderRadius: 12, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+            <LogOut size={15} color="rgba(255,255,255,0.4)" />
+          </button>
+        </div>
+        <h1 style={{ color: '#fff', fontSize: 22, fontWeight: 900, margin: '0 0 4px' }}>שלום, {user?.full_name?.split(' ')[0]}</h1>
+        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13, margin: 0 }}>{tenants.length} שוכרים במאגר</p>
+      </div>
+
+      <div style={{ position: 'relative', zIndex: 1, padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+
+        {/* Invite banner */}
+        <button onClick={() => setShowInvite(!showInvite)} style={{ ...cardStyle, padding: '16px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontFamily: 'inherit', width: '100%', textAlign: 'right' }}>
+          <div>
+            <p style={{ color: '#fff', fontWeight: 800, fontSize: 15, margin: '0 0 4px' }}>הזמן שוכר למלא פרופיל</p>
+            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, margin: 0 }}>שלח קישור — קבל פרופיל מלא תוך דקות</p>
+          </div>
+          <div style={{ width: 40, height: 40, borderRadius: 14, background: 'rgba(0,212,186,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Send size={16} color="#00D4BA" />
           </div>
         </button>
 
-        {/* Invite Panel */}
         {showInvite && (
-          <div className="card p-4 animate-fade-in">
-            <p className="font-bold text-gray-800 text-sm mb-3">הקישור שלך לשיתוף</p>
-            <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 mb-3">
-              <span className="text-xs text-gray-500 truncate flex-1">{inviteLink}</span>
-              <button onClick={copyInvite} className="shrink-0 p-1.5 bg-white rounded-lg border border-gray-200">
-                <Copy className="w-3.5 h-3.5 text-teal-600" />
+          <div style={{ ...cardStyle, padding: 18 }}>
+            <p style={{ color: '#fff', fontWeight: 700, fontSize: 14, margin: '0 0 12px' }}>הקישור שלך לשיתוף</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: '10px 14px', marginBottom: 12 }}>
+              <span style={{ flex: 1, fontSize: 12, color: 'rgba(255,255,255,0.4)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{inviteLink}</span>
+              <button onClick={copyInvite} style={{ flexShrink: 0, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, padding: '6px 8px', cursor: 'pointer', display: 'flex' }}>
+                <Copy size={14} color="#00D4BA" />
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button onClick={copyInvite} className={`py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition-colors ${copied ? 'bg-green-500 text-white' : 'bg-gray-900 text-white'}`}>
-                {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <button onClick={copyInvite} style={{ padding: '12px', borderRadius: 14, outline: 'none', fontFamily: 'inherit', fontSize: 14, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: copied ? '#059669' : 'rgba(0,212,186,0.15)', color: copied ? '#fff' : '#00D4BA', border: `1px solid ${copied ? 'transparent' : 'rgba(0,212,186,0.25)'}` }}>
+                {copied ? <CheckCircle size={16} /> : <Copy size={16} />}
                 {copied ? 'הועתק!' : 'העתק לינק'}
               </button>
-              <button onClick={sendWhatsApp} className="py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 text-white" style={{ background: '#25D366' }}>
-                <Send className="w-4 h-4" />
-                WhatsApp
+              <button onClick={sendWhatsApp} style={{ padding: '12px', borderRadius: 14, border: 'none', fontFamily: 'inherit', fontSize: 14, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#25D366', color: '#fff' }}>
+                <Send size={16} />WhatsApp
               </button>
             </div>
           </div>
         )}
 
-        {/* ── Stats ── */}
-        <div className="grid grid-cols-3 gap-2">
+        {/* Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
           {[
-            { label: 'שוכרים', value: tenants.length, icon: Users, iconColor: '#6366f1', iconBg: '#e0e7ff' },
-            { label: 'ציון ≥70', value: tenants.filter(t => t.score >= 70).length, icon: TrendingUp, iconColor: '#059669', iconBg: '#d1fae5' },
-            { label: 'עם ערב', value: tenants.filter(t => t.has_guarantor).length, icon: Shield, iconColor: '#0d9488', iconBg: '#ccfbf1' },
-          ].map(({ label, value, icon: Icon, iconColor, iconBg }) => (
-            <div key={label} className="card p-3 text-center">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center mx-auto mb-2" style={{ background: iconBg }}>
-                <Icon className="w-4 h-4" style={{ color: iconColor }} />
+            { label: 'שוכרים', value: tenants.length, color: '#6B3FFF', bg: 'rgba(107,63,255,0.12)', Icon: Users },
+            { label: 'ציון ≥70', value: tenants.filter(t => t.score >= 70).length, color: '#00D4BA', bg: 'rgba(0,212,186,0.12)', Icon: TrendingUp },
+            { label: 'עם ערב', value: tenants.filter(t => t.has_guarantor).length, color: '#00B89F', bg: 'rgba(0,184,159,0.12)', Icon: Shield },
+          ].map(({ label, value, color, bg, Icon }) => (
+            <div key={label} style={{ ...cardStyle, padding: '14px 10px', textAlign: 'center' }}>
+              <div style={{ width: 32, height: 32, borderRadius: 12, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}>
+                <Icon size={15} color={color} />
               </div>
-              <p className="text-[22px] font-black text-gray-900 leading-none">{value}</p>
-              <p className="text-[11px] text-gray-400 mt-1">{label}</p>
+              <p style={{ color: '#fff', fontSize: 22, fontWeight: 900, margin: '0 0 4px', lineHeight: 1 }}>{value}</p>
+              <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11, margin: 0 }}>{label}</p>
             </div>
           ))}
         </div>
 
-        {/* ── Search ── */}
-        <div className="space-y-2">
-          <div className="relative">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        {/* Search */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ position: 'relative' }}>
+            <Search size={16} color="rgba(255,255,255,0.3)" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)' }} />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="חפש שוכר לפי שם..."
-              className="w-full card py-2.5 pr-10 pl-4 text-sm focus:outline-none focus:border-teal-400 focus:shadow-sm transition-shadow"
-              style={{ borderRadius: 12 }}
+              style={{ width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '12px 44px 12px 16px', color: '#fff', fontSize: 14, fontFamily: 'inherit', outline: 'none' }}
             />
           </div>
           {cities.length > 1 && (
-            <div className="flex gap-1.5 overflow-x-auto pb-1">
+            <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
               {['הכל', ...cities].map(city => (
-                <button
-                  key={city}
-                  onClick={() => setFilterCity(city === 'הכל' ? '' : city)}
-                  className={`shrink-0 text-xs px-3 py-1.5 rounded-full font-semibold transition-colors ${(city === 'הכל' && !filterCity) || filterCity === city ? 'bg-gray-900 text-white' : 'bg-white text-gray-500 border border-gray-200'}`}
-                >
+                <button key={city} onClick={() => setFilterCity(city === 'הכל' ? '' : city)} style={{
+                  flexShrink: 0, fontSize: 12, padding: '7px 14px', borderRadius: 999, fontFamily: 'inherit', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s',
+                  background: (city === 'הכל' && !filterCity) || filterCity === city ? '#00D4BA' : 'rgba(255,255,255,0.06)',
+                  color: (city === 'הכל' && !filterCity) || filterCity === city ? '#07080F' : 'rgba(255,255,255,0.5)',
+                  border: (city === 'הכל' && !filterCity) || filterCity === city ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                }}>
                   {city}
                 </button>
               ))}
@@ -194,46 +200,46 @@ export default function AgentDashboard() {
           )}
         </div>
 
-{/* ── Tenant List ── */}
-        <div className="space-y-2 pb-8">
+        {/* Tenant list */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingBottom: 32 }}>
           {loading ? (
-            <div className="space-y-2">
-              {[1,2,3].map(i => <div key={i} className="card p-4 h-20 skeleton" />)}
-            </div>
+            [1, 2, 3].map(i => (
+              <div key={i} style={{ ...cardStyle, padding: 18, height: 80, background: 'rgba(255,255,255,0.03)' }} />
+            ))
           ) : filtered.length === 0 ? (
-            <div className="card p-10 text-center">
-              <p className="text-4xl mb-3">👥</p>
-              <p className="font-bold text-gray-700">אין שוכרים עדיין</p>
-              <p className="text-gray-400 text-sm mt-1">שלח קישור הזמנה לשוכרים שלך</p>
+            <div style={{ ...cardStyle, padding: '48px 24px', textAlign: 'center' }}>
+              <p style={{ fontSize: 48, margin: '0 0 12px' }}>👥</p>
+              <p style={{ color: '#fff', fontWeight: 800, fontSize: 16, margin: '0 0 6px' }}>אין שוכרים עדיין</p>
+              <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13, margin: 0 }}>שלח קישור הזמנה לשוכרים שלך</p>
             </div>
           ) : (
             filtered.map(tenant => (
-              <button
-                key={tenant.id}
-                onClick={() => navigate(`/profile/user-${tenant.user_id}`)}
-                className="w-full card p-4 text-right hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-center gap-3">
+              <button key={tenant.id} onClick={() => navigate(`/profile/user-${tenant.user_id}`)} style={{ ...cardStyle, padding: 16, textAlign: 'right', cursor: 'pointer', fontFamily: 'inherit', width: '100%', display: 'block' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <ScoreRing score={tenant.score} />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <p className="font-bold text-gray-900 text-sm">{tenant.full_name}</p>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+                      <p style={{ color: '#fff', fontWeight: 800, fontSize: 14, margin: 0 }}>{tenant.full_name}</p>
                       <ScoreTag score={tenant.score} />
                     </div>
-                    <div className="flex items-center gap-3 text-xs text-gray-400">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
                       {tenant.current_city && (
-                        <span className="flex items-center gap-0.5"><MapPin className="w-3 h-3" />{tenant.current_city}</span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 3, color: 'rgba(255,255,255,0.3)', fontSize: 12 }}>
+                          <MapPin size={11} />{tenant.current_city}
+                        </span>
                       )}
                       {tenant.employment_type && (
-                        <span className="flex items-center gap-0.5"><Briefcase className="w-3 h-3" />{tenant.employment_type}</span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 3, color: 'rgba(255,255,255,0.3)', fontSize: 12 }}>
+                          <Briefcase size={11} />{tenant.employment_type}
+                        </span>
                       )}
                     </div>
-                    <div className="flex gap-1.5 mt-1.5 flex-wrap">
-                      {tenant.has_guarantor && <span className="badge badge-teal">ערב ✓</span>}
-                      {tenant.income_range && <span className="badge badge-green">₪{tenant.income_range}</span>}
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                      {tenant.has_guarantor && <span style={{ fontSize: 10, fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: 'rgba(0,212,186,0.12)', color: '#00D4BA', border: '1px solid rgba(0,212,186,0.2)' }}>ערב ✓</span>}
+                      {tenant.income_range && <span style={{ fontSize: 10, fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: 'rgba(0,212,186,0.08)', color: '#00B89F', border: '1px solid rgba(0,184,159,0.2)' }}>₪{tenant.income_range}</span>}
                     </div>
                   </div>
-                  <ChevronLeft className="w-4 h-4 text-gray-300 flex-shrink-0" />
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                 </div>
               </button>
             ))
