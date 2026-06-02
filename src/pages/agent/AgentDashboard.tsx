@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Send, Shield, LogOut, Copy, ChevronLeft, MapPin, Briefcase, TrendingUp, Users, Zap, Gift, CheckCircle } from 'lucide-react';
+import { Search, Send, Shield, LogOut, Copy, ChevronLeft, MapPin, Briefcase, TrendingUp, Users, Zap, CheckCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -194,16 +194,7 @@ export default function AgentDashboard() {
           )}
         </div>
 
-        {/* ── Affiliate ── */}
-        <button onClick={() => navigate('/affiliate')} className="w-full card px-4 py-3.5 flex items-center justify-between hover:shadow-md transition-shadow">
-          <div className="text-right">
-            <p className="font-bold text-sm text-gray-900">הרוויח ₪30 על כל סוכן שתביא</p>
-            <p className="text-xs text-gray-400 mt-0.5">שתף קולגות — קרדיט אוטומטי</p>
-          </div>
-          <Gift className="w-5 h-5 text-gray-400 flex-shrink-0" />
-        </button>
-
-        {/* ── Tenant List ── */}
+{/* ── Tenant List ── */}
         <div className="space-y-2 pb-8">
           {loading ? (
             <div className="space-y-2">

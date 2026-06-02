@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Share2, CheckCircle, Star, Zap, LogOut, TrendingUp, Gift, Shield } from 'lucide-react';
+import { Share2, CheckCircle, Star, Zap, LogOut, TrendingUp, Shield } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import ScoreCircle from '../../components/ScoreCircle';
@@ -171,15 +171,6 @@ export default function TenantHome() {
             <p className="text-[11px] mt-0.5" style={{ color:'rgba(255,255,255,0.35)' }}>+5 נקודות לציון</p>
           </button>
 
-          <button onClick={() => navigate('/affiliate')}
-            className="col-span-2 rounded-2xl px-5 py-4 flex items-center justify-between transition-all active:scale-[0.98]"
-            style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)' }}>
-            <div>
-              <p className="font-bold text-[13px] text-white">הרוויח קרדיט — שתף חברים</p>
-              <p className="text-[11px] mt-0.5" style={{ color:'rgba(255,255,255,0.35)' }}>₪30 על כל חבר שמשלם</p>
-            </div>
-            <Gift style={{ width:18, height:18, color:'rgba(255,255,255,0.3)', flexShrink:0 }} />
-          </button>
         </div>
 
       </div>
