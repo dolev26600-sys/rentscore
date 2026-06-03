@@ -9,6 +9,8 @@ import Welcome from './pages/Welcome';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import AITools from './pages/AITools';
+import FineAppeal from './pages/FineAppeal';
+import Zakai from './pages/Zakai';
 
 // Tenant
 import TenantOnboarding from './pages/tenant/TenantOnboarding';
@@ -65,6 +67,8 @@ function AppRoutes() {
       <Route path="/demo" element={<PublicProfile isDemo />} />
       <Route path="/profile/:id" element={<PublicProfile />} />
       <Route path="/rec/:token" element={<RecommendationApproval />} />
+      <Route path="/fine-appeal" element={<FineAppeal />} />
+      <Route path="/zakai" element={<Zakai />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
